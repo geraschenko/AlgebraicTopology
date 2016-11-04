@@ -1,0 +1,2157 @@
+\documentclass[12pt]{article}
+
+ \usepackage{amsthm}
+ \usepackage{amsmath}
+ \usepackage{amssymb}
+ \usepackage{latexsym}
+ \usepackage[all]{xy}
+    \SelectTips{cm}{10} % Use the nice arrow heads
+    \everyxy={<2.5em,0em>:} % Sets the scale I like
+ \usepackage{accents}
+ \usepackage{pstricks}
+ \usepackage[paperheight=11in,%
+          paperwidth=8.5in,%
+          outer=1.2in,%
+          inner=1in,%
+          bottom=.7in,%
+          top=.7in,%
+          includeheadfoot]{geometry}
+
+ \makeatletter \@addtoreset{equation}{section} \makeatother
+
+ \theoremstyle{plain}
+ \newtheorem{theorem}[equation]{Theorem}
+ \newtheorem*{claim}{Claim}
+ \newtheorem{lemma}[equation]{Lemma}
+ \newtheorem{corollary}[equation]{Corollary}
+ \newtheorem{proposition}[equation]{Proposition}
+
+ \theoremstyle{definition}
+ \newtheorem{definition}[equation]{Definition}
+ \makeatletter
+ \newenvironment{example}[1][]{%
+    \begin{trivlist} \item[]%
+    \refstepcounter{equation}\textbf{Example~\theequation}%
+    \@ifnotempty{#1}{\the\thm@notefont \ (#1)}\textbf{.} }%
+    {\hspace*{\fill}$\bullet$ \end{trivlist}}
+ \makeatother
+ \newtheorem{exercise}{$\blacktriangleright$
+                       \hypertarget{Ex\theexercise}{Exercise}}[section]
+
+ \newenvironment{solution}{%\small%
+        \begin{trivlist} \item \textit{Solution}. }{%
+            \hspace*{\fill} $\blacksquare$\end{trivlist}}%
+
+ \theoremstyle{remark}
+ \newtheorem{remark}[equation]{Remark}
+
+ \renewcommand{\theequation}{\thesection.\arabic{equation}}
+
+%%%%%%%%%%%%%%%% Anton's Shortcuts %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \def\proclaim #1. #2\par{\medbreak \noindent \textbf{#1.} \textit{#2}\par\medbreak}
+ \newcommand{\anton}[1]{[[\index{"!@notes and corrections}
+                        \ensuremath{\bigstar\bigstar\bigstar} #1]]}
+ \newcommand{\bbar}[1]{\overline{#1}}
+ \newcommand{\bigast}{\text{\Large $\ast$}}
+ \newcommand\C{\mathcal{C}}
+ \DeclareMathOperator{\coker}{coker}
+ \newcommand{\CC}{\ensuremath{\mathbb{C}}}
+ \newcommand{\D}{\ensuremath{\mathcal{D}}}
+ \DeclareMathOperator{\End}{End}
+ \DeclareMathOperator{\ext}{Ext}
+ \newcommand{\F}{\mathcal{F}}
+ \let\hom\relax % kills the old hom
+ \DeclareMathOperator{\hom}{Hom}
+ \renewcommand{\H}{\widetilde H}
+ \renewcommand{\labelitemi}{--}                    % changes the default bullet in itemize
+ \newcommand{\id}{\mathrm{Id}}
+ \DeclareMathOperator{\im}{im}
+ \newcommand{\inn}[1]{\accentset{\circ}{#1}}
+ \newcommand{\po}{\rule{5pt}{.4pt}\rule{.4pt}{5.4pt}\llap{$\cdot$\hspace{1pt}}}
+ \newcommand{\pb}{\rule{.4pt}{5.4pt}\rule[5pt]{5pt}{.4pt}\llap{$\cdot$\hspace{1pt}}}
+ \newcommand{\PP}{\mathbb{P}}
+ \newcommand{\QQ}{\ensuremath{\mathbb{Q}}}
+ \newcommand{\RR}{\ensuremath{\mathbb{R}}}
+ \newcommand{\smaltrix}[4]{\ensuremath{\left( %
+            \begin{smallmatrix} #1 & #2 \\ #3 & #4 \end{smallmatrix} \right)}}
+ \DeclareMathOperator{\tor}{Tor}
+ \newcommand{\W}{\Omega}
+ \newcommand{\ZZ}{\ensuremath{\mathbb{Z}}}
+%%%%%%%%%%%%% End Anton's shortcuts %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+ \title{\vspace*{-4\baselineskip} Anton Geraschenko's Topology Notes}
+ \date{}
+ \author{}
+ \maketitle
+ \setcounter{section}{1}
+ \vspace*{-3\baselineskip}
+
+ \section*{About these notes}
+ I took Math 215A, Algebraic Topology, with Peter Teichner in Fall 2006. I took some
+ notes in class and then wrote them up after class. At first, I would do one lecture at a
+ time (so the earlier sections really are one lecture's worth of material). Later in the
+ course, I would wait a bit before writing up a lecture because subsequent lectures often
+ added context. Thus, the later sections are not in bijection with lectures, but are
+ partitioned by topic. I often added proofs for statements that were not proven in class,
+ or modified the proofs from class.
+
+ These notes are not self-contained. There is often dependence on results from the
+ homework and occasionally some statements are not proven at all.
+
+
+ All spaces are Hausdorff and all maps are continuous.
+ \section{A Theorem from Point-Set topology}
+ \begin{theorem}\label{T:cmptHausbij}
+   If $X$ is compact (and Hausdorff) and $Y$ is Hausdorff, then $f:X\to Y$ is closed. In
+   particular, if $f$ is a bijection, then it is a homeomorphism.
+ \end{theorem}
+ \begin{proof}
+   If $A\subseteq X$ be closed, then it is compact because closed subsets of compact sets
+   are compact. Since the continuous image of a compact set is compact, $f(A)$ is
+   compact. Since compact subsets of Hausdorff spaces are closed, $f(A)$ is closed.
+ \end{proof}
+
+ \section{homotopic maps}
+
+ \begin{definition}
+   The $n$-dimensional ball is $D^n = \{x\in \RR^n | \|x\|_2\le 1\}$. The sphere is
+   $S^{n-1} = \partial D^n = D^n\smallsetminus \inn D^n$.
+ \end{definition}
+ \begin{theorem}
+   If $C\subseteq \RR^n$ is convex, compact, and $\inn C\neq \varnothing$, then $C\approx
+   D^n$ and $\partial C\approx S^{n-1}$.
+ \end{theorem}
+ \begin{proof}
+   Assume $0\in \inn C$. Define $f:\partial C\to S^{n-1}$ by $f(x) = \frac{x}{\|x\|_2}$.
+   $f$ is surjective because for every $v\in S^{n-1}$, there is a maximal $t\in \RR_{>0}$
+   so that $tv\in \partial C$. By convexity of $C$, this $t$ is unique (here you use that
+   $\inn C$ contains a ball around $0$), so $f$ is injective. Since $\partial C$ is
+   compact and $S^{n-1}$ is Hausdorff, $f$ is a homeomorphism by Theorem
+   \ref{T:cmptHausbij}. Similarly, extend $f$ to a homeomorphism $\tilde f:C\to D^n$.
+ \end{proof}
+ \begin{corollary}
+   For any norm, the ball you get is homeomorphic to the ball with the 2-norm.
+ \end{corollary}
+ \begin{definition}
+   $f_0,f_1:X\to Y$ are \emph{homotopic} (written $f_0 \simeq f_1$) if there is a
+   continuous map $F:X\times I \to Y$ such that $F(x,i)=f_i(x)$ for $i=0,1$.
+ \end{definition}
+ If $F(x,t)$ is continuous in $t$, there is an associated map $F^*:I\to
+ Y^X:=\hom_\text{Top}(X,Y)$. In this case, a homotopy of maps is just a path in the
+ mapping space $Y^X$.
+
+ We'll show next time that for $F$ to be continuous in $t$, you need $X$ to be
+ \emph{locally compact} (every point must have a compact neighborhood\footnote{Since all
+ our spaces are Hausdorff, this is equivalent to saying that every neighborhood of a
+ point contains a compact neighborhood.}). In this case, there is a topology on $Y^X$
+ which makes $F^*$ continuous.
+ \begin{definition}
+   The \emph{compact-open} topology on $Y^X$ has a sub-basis given by sets of the form
+   $M(K,U)=\{g:X\to Y|g(K)\subseteq U\}$, where $K\subseteq X$ is compact and $U\subseteq
+   Y$ is open.
+ \end{definition}
+
+ \section{Compact-Open topology and Exponential laws}
+ If $X$ is compact and $Y$ is a metric space, then the compact-open topology is given by
+ the metric $d(f,g)=\sup \{d(f(x),g(x)\}$.
+ \begin{lemma}\label{L:locmptEvcont}
+   If $X$ is locally compact, then the evaluation map $ev:Y^X\times X\to Y$, given by
+   $(f,x)\mapsto f(x)$, is continuous.
+ \end{lemma}
+ \begin{proof}
+   If $U$ is a neighborhood of $f(x)$, $f^{-1}(U)$ contains some compact open
+   neighborhood $K$ of $x$. Then $ev\bigl(M(K,U)\times K\bigr)\subseteq U$ by definition,
+   so $M(K,U)\times \inn K$ is an open neighborhood of $(f,x)$ in $ev^{-1}(U)$.
+ \end{proof}
+ \begin{theorem}
+   Let $X$ be locally compact. Then $f:X\times T\to Y$ is continuous if and only if (1)
+   each $f_t:X\to Y$ is continuous, and (2) $\hat f:T\to Y^X$ is continuous.
+ \end{theorem}\vspace*{-\baselineskip}
+ \begin{proof}
+   ($\Leftarrow$) $f$ is the composition $X\times T\xrightarrow{\smaltrix 0{\hat
+   f}{\id_X}0} Y^X\times X \xrightarrow{ev} Y$. By $(1)$, $\hat f(t)=f_t$ is
+   in $Y^X$; $\smaltrix 0{\hat f}{\id_X}0$ is continuous by $(2)$ and $ev$ is
+   continuous by Lemma \ref{L:locmptEvcont}.
+
+   ($\Rightarrow$) $f_t$ is the composition of continuous functions
+   $X\xrightarrow{x\mapsto (x,t)} X\times T\xrightarrow{f} Y$, proving $(1)$. To prove
+   $(2)$, we need to prove that $\hat f^{-1}\bigl(M(K,U)\bigr)=\bigl\{t\in
+   T|f(K\times\{t\})\subseteq U\bigr\}\subseteq T$ is open. Fix some $t\in T$ such that
+   $f(K\times \{t\})\subseteq U$.
+   \begin{claim}
+     There are open sets $W\subseteq T$ and $V\subseteq X$ such that $K\times
+     \{t\}\subseteq V\times W\subseteq f^{-1}(U)$
+   \end{claim}
+   By continuity of $f$, for each $x\in K$, there are open neighborhoods $x\in
+   V_x\subseteq X$ and $t\in W_x\subseteq T$ such that $V_x\times W_x\subseteq
+   f^{-1}(U)$. By compactness, $K\subseteq V_{x_1}\cup \cdots \cup V_{x_n}=:V$. Set
+   $W=W_{x_1}\cap \cdots\cap W_{x_n}$. This $V$ and $W$ satisfy the claim.
+   \[\begin{pspicture}(-.7,-.6)(5.5,5)
+     \psframe[framearc=.1](1,1)(3,3)
+       \psline{(-)}(1,-.5)(3,-.5) \rput(1,-.1){$V_{x_1}$}
+       \psline{(-)}(-.5,1)(-.5,3) \rput(0,1.2){$W_{x_1}$}
+     \psframe[framearc=.1](1.8,2.2)(5,4)
+       \psline{(-)}(1.8,0)(5,0) \rput(4.5,-.3){$V_{x_2}$}
+       \psline{(-)}(0,2.2)(0,4) \rput(-.5,3.5){$W_{x_2}$}
+     \psframe[framearc=.1,linestyle=dotted](1.1,2.3)(4.9,2.9)
+     \psline[linewidth=1.5pt,linecolor=darkgray](1.3,2.5)(4.7,2.5)
+       \rput(4,2.7){\scriptsize $K\times \{t\}$}
+     \psccurve(.8,.8)(3,.8)(3.5,1.7)(5,2)(5,4.2)(1.8,4.2)(1.5,3.5)(.8,3)
+       \rput(4.3,1.3){$f^{-1}(U)$}
+   \end{pspicture}\]
+   Now the given $W$ is a neighborhood of $t$ in $\hat f^{-1}\bigl(M(K,U)\bigr)$.
+ \end{proof}
+ \begin{theorem}[Exponential Law]
+   If $X$ is locally compact, then $Y^{X\times T}\approx (Y^X)^T$, $f\mapsto \hat f$.
+ \end{theorem}
+ \begin{proof}
+   By the previous theorem, this map is bijective. It is an exercise to show the
+   homeomorphism. Or look at page 531 of Hatcher.
+ \end{proof}
+ \begin{lemma}
+   If $X$ and $T$ are locally compact, then
+   \begin{itemize}
+     \item $Y^X\times W^X \approx (Y\times W)^X$
+     \item $Y^{X\coprod T}\approx Y^X\times Y^T$
+     \item $\bigl((Y,y_0)^{(X,x_0)},\mathrm{const}_{y_0}\bigr)^{(T,t_0)}\approx (Y,y_0)^{(X\times T,X\vee
+     T)} \approx (Y,y_0)^{X\wedge T}$.
+   \end{itemize}
+   where $X\wedge T:= X\times T/X\vee T$.
+   \begin{definition}
+     $f:X\to Y$ is a \emph{homotopy equivalence} if there is a $g:Y\to X$ so that $g\circ
+     f\simeq \id_Y$ and $f\circ g\simeq \id_X$.
+   \end{definition}
+ \end{lemma}
+
+ \section{CW complexes}
+ \begin{definition}
+   A space $X$ is \emph{homogeneous} if the group of homeomorphisms $X\to X$ acts
+   transitively on the points of $X$.
+ \end{definition}
+ \begin{theorem}
+   Every connected manifold is homogeneous. Every topological group is homogeneous.
+ \end{theorem}
+ For example, the Cantor set is homogeneous.
+
+ The push-out and pull-back are (respectively)
+ \[\xymatrix{
+   A \ar[r]^{f_1} \ar[d]_{f_2} \ar@{}[dr]|(.75)\po & B_1 \ar[d]^{g_1} \ar[dr] \\
+   B_2 \ar[r]^{g_2} \ar@/_2ex/[rr] & PO \ar@{-->}[r]^{\exists !} & Y
+ }
+ \xymatrix{
+   Y \ar@{-->}[r]_{\exists !} \ar@/^2ex/[rr] \ar[dr]
+   & PB\ar[r]_{g_1} \ar[d]^{g_2} \ar@{}[dr]|(.25)\pb & B_1 \ar[d]^{f_1} \\
+   & B_2 \ar[r]^{f_2} & A }
+ \]
+ Pull-backs and push-outs exist in the category of topological spaces (the constructions
+ from Set work). $PO = B_1\coprod B_2/f_1(a)\sim f_2(a)$ and $PB = \{(x,y)\in B_1\times
+ B_2| f_1(x)=f_2(y)\}$.
+
+ A \emph{CW complex} is where you attach cells in order of
+ dimension. That is, define $X^{(-1)}=\varnothing$, and define the \emph{$n$-skeleton}
+ $X^{(n)}$ by
+ \[\xymatrix{
+   \coprod_{\alpha\in I_n}S^{n-1} \ar@{^(->}[r] \ar[d]_{\coprod \phi_\alpha}
+   \ar@{}[dr]|(.75)\po
+   & \coprod D^n \ar[d]^{\Phi_\alpha}\\
+   X^{(n-1)}\ar[r] & X^{(n)} }
+ \]
+ for some indexing set $I_n$. The $\phi_\alpha$ are called \emph{attaching maps} and the
+ $\Phi_\alpha$ are called \emph{characteristic maps}. Define $e_\alpha^n =
+ \Phi_\alpha(\inn D^n)$. Define $X$ as $\bigcup X^{(n)}$, with the direct limit topology
+ (a set is open if and only if the intersection with $X^{(n)}$ is open for each $n$).
+
+ \section{$\pi_k$ and more CW stuff}
+ \begin{definition}
+   $\pi_k(X,x_0) := \bigl[ (S^k,s_0),(X,x_0)\bigr] = \pi_0\bigl( (X,x_0)^{(S^k,x_0)}\bigr)$.
+ \end{definition}
+ Note that $S^k\approx D^k/\partial D^k \approx I^k/\partial I^k$. For $k\ge 1$,
+ $\pi_k(X,x_0)$ has a group structure given by
+ \begin{gather*}
+    f\cdot g: I^k = I^{k-1}\times I \to I^{k-1} \times 2I=I^k \cup I^k
+    \xrightarrow{f\cup g} X\\
+    \begin{xy} 0 *=(1,1)\frm{-} *{f} \end{xy} \cdot
+    \begin{xy} 0 *=(1,1)\frm{-} *{g} \end{xy} =
+    \begin{xy}
+      0 *=(1,.5)!UR\frm{-} *=(1,.5)!DR\frm{-} *+!L{I};
+      (-.5,.25) *{f}; (-.5,-.25) *{g}; (-.5,-.5) *+!U{I^{k-1}}
+    \end{xy}
+ \end{gather*}
+ \begin{lemma} For a CW complex $X$,
+   \begin{enumerate}
+     \item $\Phi_\alpha(D^n)=\bar e^n_\alpha$ (closure in $X$).
+     \item For $A\subseteq X$, $\Phi_\alpha^{-1}(A)$ is closed if and only if $A\cap \bar
+     e^n_\alpha$ is closed.
+     \item $X$ has the weak topology with respect to the maps $\Phi_\alpha:D^n\to X$.
+   \end{enumerate}
+ \end{lemma}
+ \begin{proof}
+   (1) $\Phi_\alpha(D^n)$ is closed (since $D^n$ is compact and $X$ is Hausdorff (by
+   homework 3)) and contains $e^n_\alpha$. If $A$ is closed, with $e^n_\alpha\subseteq
+   A\subseteq \Phi_\alpha(D^n)$, then $\Phi_\alpha^{-1}(A)$ is a closed set in $D^n$
+   which contains $\inn D^n$, so it is all of $D^n$. It follows that
+   $A=\Phi_\alpha(D^n)$.
+
+   (2) Is as easy as (1).
+
+   (3) If $A\subseteq X$ has the property that $\Phi_\alpha^{-1}(A)\subseteq D^n$ is
+   closed for all $\alpha$, then we'd like to show that $A\cap X^{(n)}$ is closed for all
+   $n$. Well, $A\cap X^{(-1)}=\varnothing$ is closed. Now induct; assume $A\cap
+   X^{(n-1)}$ is closed. Then using the property of push-out, $A\cap X^{(n)}$ is closed.
+ \end{proof}
+
+ \section{Van Kampen's Theorem}
+ Chris lectures today because Peter is ill. Remember the group law on $\pi_1(X)$ and
+ that $\pi_1$ is a functor, sending homotopy equivalences to isomorphisms. Say we have a
+ cover $j_\alpha:A_\alpha\to X$ of $X$ by open sets $A_\alpha$, all of which contain the
+ base point $x_0$. Then it is clear that we have commutative squares
+ \[
+ \xymatrix{
+  A_\alpha\cap A_\beta \ar@{^(->}[r]^(.65){i_{\alpha\beta}} \ar@{^(->}[d]_{i_{\beta\alpha}} &
+  A_\alpha \ar@{^(->}[d]^{j_\alpha}\\
+  A_\beta \ar@{^(->}[r]^{j_\beta} & X
+ }\qquad\raisebox{-1pc}{\text{ which induce }}\qquad \xymatrix{
+  \pi_1(A_\alpha\cap A_\beta) \ar[r]^(.55){i_{\alpha\beta *}}
+  \ar[d]_{i_{\beta\alpha *}} & \pi_1(A_\alpha) \ar[d]^{j_{\alpha *}}\\
+  \pi_1(A_\beta) \ar[r]^{j_{\beta *}} & \pi_1(X)
+ }\]
+ where each space has the base point $x_0$. Thus, we have a map $\Phi:\bigast_\alpha
+ \pi_1(A_\alpha,x_0) \to \pi_1(X)$, and it is obvious the relations
+ $j_{\alpha *}\circ i_{\alpha \beta *} (w) = j_{\beta *} \circ i_{\beta \alpha *} (w)$.
+
+ \begin{theorem}[Van Kampen's Theorem]
+   Let $X=\bigcup A_\alpha$, with $X$, $A_\alpha$, and $A_\alpha\cap A_\beta$ all path
+   connected and containing the base point $x_0$. Then the map $\Phi:\bigast_\alpha
+   \pi_1(A_\alpha,x_0)\to \pi_1(X,x_0)$ is surjective. Furthermore, if all of the
+   $A_\alpha\cap A_\beta\cap A_\gamma$ are path connected, then the kernel of $\Phi$ is
+   generated by elements of the form $i_{\alpha \beta *}(w)\cdot i_{\beta\alpha
+   *}(w)^{-1}$, where $w\in \pi_1(A_\alpha\cap A_\beta,x_0)$.
+ \end{theorem}
+ \begin{proof}
+   First we prove surjectivity. Let $f:I\to X$ be a loop at $x_0$. Choose $0=s_0<
+   s_1<\cdots < s_{n-1}< s_n=1$ so that $f([s_i,s_{i+1}])\subseteq A_{\alpha_i}=:A_i$.
+   Define $f_i$ to be the path $I\xrightarrow{\sim} [s_i,s_{i+1}]
+   \xrightarrow{f|_{[s_i,s_{i+1}]}} X$. Choose paths $g_i:I\to A_i\cap A_{i+1}$ from
+   $f(s_i)$ to $x_0$. Then $f\simeq (f_0 g_1)(g_1^{-1}f_1g_2)\cdots (g_{n-2} f_{n-2}
+   g_{n-1}) (g_{n-1}^{-1} f_{n-1})\in \im \Phi$.
+
+   To prove that the kernel of $\Phi$ is what we want, it is enough to show that given an
+   element $f_1\cdots f_n\in \bigast_\alpha \pi_1(A_\alpha)$, with $f_i\in A_{\alpha_i}$,
+   such that $\Phi(f_1\cdots f_n)=0$, we can turn $f_1\cdots f_n$ into the constant map
+   using a series of the following moves:
+   \begin{enumerate}
+     \item Replace $f_i$ by an equivalent element of $\pi_1(A_{\alpha_1})$ (i.e. homotope
+     $f_i$ within $A_{\alpha_i}$), or, if $\alpha_i=\alpha_{i+1}$, replace $f_i\cdot
+     f_{i+1}$ by their product in $\pi_1(A_{\alpha_i})$. These operations don't change
+     the element of $\bigast_\alpha \pi_1(A_\alpha)$.
+
+     \item If the image of $f_i$ lies in $A_\beta$, then think of it as an element of
+     $\pi_1(A_\beta)$, rather than an element of $\pi_1(A_{\alpha_i})$.
+   \end{enumerate}
+   Let $F:I\times I\to X$ be a homotopy from $f_1\cdots f_n$ to the constant map. Then
+   cut up $I\times I$ into little squares, so that the image of each square lies entirely
+   within some $A_\alpha$. We can perturb the squares slightly so that each point touches
+   at most three of the squares:
+   \[\begin{xy}
+     (-1.5,-1) *{1} *=(1,1)\frm{-},
+     (-.5,-1) *{2} *=(1,1)\frm{-},
+     (.5,-1) *{3} *=(1,1)\frm{-},
+     (1.5,-1) *{4} *=(1,1)\frm{-},
+     (-1.5,0) *{5} *=(1.1,1)!(-.05,0)\frm{-},
+     (-.4,0) *{6} *=(1,1)\frm{-},
+     (.6,0) *{7} *=(1,1)\frm{-},
+     (1.6,0) *{8} *=(.9,1)!(.05,0)\frm{-},
+     (-1.5,1) *{9} *=(1,1)\frm{-},
+     (-.5,1) *{10} *=(1,1)\frm{-},
+     (.5,1) *{11} *=(1,1)\frm{-},
+     (1.5,1) *{12} *=(1,1)\frm{-},
+   \end{xy}\]
+   For each vertex $v$, choose a path $g_v$ from $F(v)$ to $x_0$. We may choose the path
+   $g_v$ to lie entirely in the three open sets containing the images of the squares
+   adjacent to $v$. Number the little squares as shown, and let $\gamma_i$ be the path
+   which has little squares $1$ through $i$ below it, so $\gamma_0$ is the bottom edge,
+   with $F(\gamma_0)=f_1\cdots f_n$. Notice that we get a factorization of $\gamma_i$ as
+   an element of $\bigast_\alpha \pi_1(A_\alpha)$ by looking at the images of the
+   horizontal and vertical edges and concatenating with the $g_v$. But it is better than
+   that: the image of each edge lies in two of the $A_\alpha$! That is, we get two
+   versions of each edge, related by operation 2 above.
+
+   Start with $\gamma_0$, written as some element of $\bigast \pi_1(A_\alpha)$. Apply a
+   homotopy to the first factor that is entirely in $A_1$ (the open set containing the
+   image of the square labeled 1). Now think of the new edges as living in the adjacent
+   $A_\alpha$ (the is move 2), and repeat until you've reached the constant map.
+ \end{proof}
+ \begin{example}
+   Let $n>1$. In $S^n$, let $U$ be a neighborhood of the closed northern hemisphere
+   ($U\approx \inn D^n$), let $V$ be a neighborhood of the closed southern hemisphere
+   ($V\approx \inn D^n$), and let the base point be on the equator. Then $U\cap V$ is
+   path connected (not true if $n=1$), so by Van Kampen's Theorem, $\pi_1(\inn D^n)\ast
+   \pi_1(\inn D^n)\cong \{e\}$ surjects onto $\pi_1(S^n)$, so $\pi_1(S^n)$ is trivial.
+ \end{example}
+ \begin{example}
+   If $X=\bigvee_\alpha X_\alpha$, where each $X_\alpha$ is path connected and for each
+   $\alpha$, $x_\alpha\in X_\alpha$ is a deformation retract of a neighborhood. Then Van
+   Kampen's Theorem applies to tell us that $\pi_1(X)\cong \bigast_\alpha
+   \pi_1(X_\alpha)$.
+ \end{example}
+ \begin{example}
+   Write the torus as the union of a popped torus and a patch:
+   \[\begin{pspicture}(-.5,-.5)(.5,.5)
+     \pspolygon[fillstyle=solid,fillcolor=lightgray](-.5,-.5)(.5,-.5)(.5,.5)(-.5,.5)
+   \end{pspicture} \raisebox{1pc}{\qquad =\qquad}
+   \begin{pspicture}(-.5,-.5)(.5,.5)
+     \pspolygon[fillstyle=solid,fillcolor=lightgray](-.5,-.5)(.5,-.5)(.5,.5)(-.5,.5)
+     \pscircle[fillstyle=solid,fillcolor=white,linestyle=dashed](0,0){.2}
+   \end{pspicture}\raisebox{1pc}{\qquad $\cup$ \qquad}
+   \begin{pspicture}(-.5,-.5)(.5,.5)
+     \pscircle[fillstyle=solid,fillcolor=lightgray,linestyle=dashed](0,0){.4}
+   \end{pspicture}\]
+  The first piece, call it $U_1$, is homotopic to the wedge of two circle, so
+  $\pi_1(U_1)=\ZZ\ast \ZZ$, generated by $a$ and $b$. The second, call it $U_2$, is
+  contractible, so $\pi_1(U_2)=1$. The intersection is homotopic to a circle,
+  $\pi_1(U_1\cap U_2)=\ZZ$. The generator of this $\ZZ$ is sent to $1$ is $\pi_1(U_2)$
+  (of course), and to $aba^{-1}b^{-1}$ in $\pi_1(U_1)$. Thus, $\pi_1(\mathbb{T}^2) =
+  \ZZ\ast\ZZ/(aba^{-1}b^{-1}=1) \cong \ZZ\oplus \ZZ$.
+ \end{example}
+ We will see later that given any finitely presented group $G=\langle g_1,\dots,
+ g_n|r_1,\dots, r_m \rangle$, one can come up with a topological space (in fact, a CW
+ 2-complex) with the desired group as a fundamental group.
+
+ \section{Characterization of CW complexes}
+ We mention the following lemma.
+ \begin{lemma}
+   If a finite group $G$ acts freely on a manifold $M^n$, then $M^n/G$ is a manifold of
+   dimension $n$.
+ \end{lemma}
+ \begin{lemma}\label{L:cmptinCW}
+   If $X$ is a CW complex and $C\subseteq X$ is compact, then $C$ lies in a finite
+   subcomplex.
+ \end{lemma}
+ \begin{proof}
+   For each cell intersecting $C$, choose a point in the intersection. Let $S$ be the
+   union of these points. Since the points are in distinct cells, $S$ is discrete, so
+   closed. Since $S\subseteq C$ must be compact, $S$ must be finite.
+
+   Now it remains to show that the closure of each cell lies in a finite subcomplex. The
+   image of the attaching map of an $n$-cell is a compact and contained in $X^{(n-1)}$,
+   so by induction on the dimension, it lies in a finite subcomplex. Clearly, any 0-cell
+   \emph{is} a finite subcomplex.
+ \end{proof}
+ \begin{theorem}[Characterization of CW complexes]
+   $X$ is a CW complex if and only if
+   \begin{enumerate}
+     \item[0.] $X$ is Hausdorff.
+
+     \item
+     T\smash{\raisebox{-2.5ex}{\llap{``C'' $\left\{ \rule{0pt}{4ex} \right.$\qquad}}}here
+     are $\phi_\alpha:D^n\to X$ such that $\phi_\alpha:\inn D^n\xrightarrow{\approx}
+     \phi_\alpha(\inn D^n) =: e^n_\alpha$, with $X= \coprod_{n,\alpha} e^n_\alpha$.
+
+     \item $\phi_\alpha(\partial D^n)$ lies in a finite union of lower-dimensional cells.
+     (``closure finite'')
+
+     \item $X$\llap{``W'' $\{$ \qquad} has the weak topology with respect to the $\phi_\alpha$.
+   \end{enumerate}
+ \end{theorem}
+ \begin{proof}
+   ($\Rightarrow$) We've checked 0, 1, and 3 already. 2 follows from Lemma
+   \ref{L:cmptinCW}.
+
+   ($\Leftarrow$) In Hatcher.
+ \end{proof}
+ \begin{definition}
+   $A\subseteq X$ is a \emph{retract} if there is a \emph{retraction} $r:X\to A$, a map
+   so that $r|_A=\id_A$.
+ \end{definition}
+ \begin{definition}
+   $A\subseteq X$ is a \emph{deformation retraction} if there is a \emph{deformation
+   retraction} $r:X\to A$, a retraction such that $i_{A\hookrightarrow X}\circ r\simeq
+   \id_X$. In particular, $A\simeq X$.
+ \end{definition}
+ \begin{definition}
+   $A\subseteq X$ is a \emph{strong deformation retraction} if there is a \emph{strong
+   deformation retraction} $r:X\to A$, a deformation retraction so that $i\circ r\simeq_A
+   \id_X$. In particular $X\simeq_A A$.
+ \end{definition}
+ \begin{example}
+   A semi-circle in a circle is a retract, but not a deformation retract.
+ \end{example}
+
+ \section{The Homotopy Lemma}
+ \begin{lemma}
+   $S^{n-1}\times I \cup D^n\times \{0\}$ is a strong deformation retract of $D^n\times
+   I$.
+ \end{lemma}
+ \begin{proof}
+   \[\psset{fillstyle=solid,fillcolor=lightgray}
+   \begin{pspicture}(0,0)(3,1)
+     \psline[fillstyle=none](0,1)(0,0)(1,0)(1,1)
+     \rput(1.5,.5){$\subseteq$}
+     \psline(2,1)(2,0)(3,0)(3,1)
+   \end{pspicture}\qquad \qquad \qquad
+   \begin{pspicture}(0,0)(1,1.5)
+     \rput(.5,1.2){$\bullet$}
+     \psline(0,1)(0,0)(1,0)(1,1)
+     \psline(.5,1.2)(0,.2)
+     \rput(0,.2){$\bullet$} \uput[180](0,.2){$\phi(x)$}
+     \rput(.2,.6){$\bullet$} \uput[-10](.2,.6){$x$}
+   \end{pspicture}\qedhere\]
+ \end{proof}
+ More generally,
+ \begin{lemma}\label{L:CWhep}
+   If $(Z,B)$ is a CW pair, then $B\times I\cup Z\times \{0\}$ is a strong deformation
+   retract of $Z\times I$.
+ \end{lemma}
+ \begin{proof}
+   Apply the previous lemma repeatedly. Induct on dimension. \anton{how about if $Z$ is
+   not finite dimensional}
+ \end{proof}
+ \begin{lemma}[Homotopy Lemma]
+   If $(Z,B)$ is a CW pair, and if $f_0,f_1:B\to Y$ are homotopic, then $Y\cup_{f_0} Z$
+   is homotopic to $Y\cup_{f_1} Z$.
+ \end{lemma}
+ \begin{proof}
+   Let $F:B\times I\to Y$ be a homotopy $f_0\simeq f_1$. We wish to show that
+   $Y\cup_{f_1} Z\subseteq Y\cup_F (Z\times I)$ is a strong deformation retract for
+   $i=0,1$. By the previous lemma, $B\times I\cup Z\times \{i\}$ is a strong deformation
+   retract of $Z\times I$. This induces a strong deformation retract of $Y\cup_F (Z\times
+   I)$:
+   \[\begin{pspicture}(-3,.5)(4,2.5)
+     \pscurve(1,1)(1.3,1.3)(1.7,1)(2,1.1)
+     \pscurve(2,2.1)(1.7,2)(1.3,2.3)(1,2)
+     \psline[linestyle=dotted](1,1)(1.2,1.4)(1.2,2.4)
+     \psline(1,1)(1,2)(1.2,2.4)
+     \psline(2,2.1)(2,1.1)(2.2,1.5)(2.2,2.5)(2,2.1)
+     \pscurve[linestyle=dotted](1.2,1.4)(1.5,1.7)(1.9,1.4)(2.2,1.5)
+     \pscurve(1.2,2.4)(1.5,2.7)(1.9,2.4)(2.2,2.5)
+     \psline(.95,1.8)(.5,1.8)(0,.5)(2.5,.5)(3,1.8)(2.25,1.8)
+     \uput[180](0,1.5){$Y\cup_F (Z\times I) = $}
+     \rput(3.6,1.5){$\longrightarrow$}
+     \uput{.5}[30](0,.5){$Y$}
+   \end{pspicture}
+   \begin{pspicture}(0,.5)(4,2.5)
+     \pscurve(1,1)(1.3,1.3)(1.7,1)(2,1.1)
+%     \pscurve(2,2.1)(1.7,2)(1.3,2.3)(1,2)
+     \psline(1,1)(1.2,1.4)(1.2,2.4)
+     \psline(1,1)(1,2)(1.2,2.4)
+     \psline(2,1.1)(2.2,1.5)
+     \pscurve(1.2,1.4)(1.5,1.7)(1.9,1.4)(2.2,1.5)
+%     \pscurve(1.2,2.4)(1.5,2.7)(1.9,2.4)(2.2,2.5)
+     \psline(.95,1.8)(.5,1.8)(0,.5)(2.5,.5)(3,1.8)(1.25,1.8)
+     \uput[0](3,1.5){$= Y\cup_{f_i} Z$}
+     \uput{.5}[30](0,.5){$Y$}
+     \psline[border=1pt]{->}(3,.5)(1.6,1.3)
+     \uput[0](3,.5){$F(B\times I)$}
+   \end{pspicture}\qedhere\]
+ \end{proof}
+ In particular, if $B$ is a space, and $\alpha\in \pi_{n-1}(B,b_0)$, then $B\cup_\alpha
+ D^n$ is well defined up to homotopy equivalence.
+ \begin{definition}
+   A pair $(X,A)$ has the \emph{homotopy extension property} (\emph{HEP}) if a homotopy
+   of $A$, defined at time zero on $X$, extends to all of $X$:
+   \[\xymatrix{
+    (X\times \{0\})\cup_{A\times \{0\}} (A\times I) \ar[r]^(.8)h &Y\\
+    X\times I\ar@{<-^)}[u] \ar@{.>}[ur]_{\tilde h}
+   }\]
+ \end{definition}
+ For example, any CW pair has HEP by Lemma \ref{L:CWhep}.
+ \begin{lemma}
+   $(X,A)$ has HEP if and only if $X\times \{0\} \cup A\times I$ is a retract of $X\times
+   I$.
+ \end{lemma}
+ \begin{proof}
+   ($\Rightarrow$) Let $Y=X\times \{0\}\cup A\times I$ with $h=\id$. Then $\tilde h$ is a
+   retract.
+
+   ($\Leftarrow$) If $r$ is a retract, set $\tilde h = h\circ r$.
+ \end{proof}
+ \begin{lemma}
+   If $(X,A)$ has HEP, then $A\subseteq X$ is closed.
+ \end{lemma}
+ Some applications:
+ \begin{enumerate}
+  \item If $(X,A)$ has HEP and the inclusion $A\hookrightarrow X$ is a homotopy
+  equivalence, then $A$ is a deformation retract of $X$.
+
+  \item If $(X,A)$ has HEP and $A$ is contractible, then the canonical map $X\to X/A$ is
+  a homotopy equivalence. To see this, let $h:A\times I\to A$ be a contraction of $A$, so
+  $h_0=\id_A$ and $h_1(A)$ is a point, then extend $h_0$ to $\id_X$. By HEP, there is a
+  homotopy $\tilde h:X\times I\to X$ so that $h_0=\id_X$ and $h_1(A)$ is a point. Then
+  $h_1$ induces a map $\phi:X/A\to X$, and $h$ induces a homotopy between $\id_{X/A}$ and
+  the composition $X/A\xrightarrow{\phi}X\to X/A$. Also, $h$ is itself a homotopy between
+  $\id_X$ and the composition $X\to X/A\xrightarrow{\phi} X$.
+ \end{enumerate}
+ \begin{example}
+   In a connected CW complex $X$, one can find a maximal spanning tree $T\subseteq X$, a
+   contractible subcomplex of $X^{1}$. Then application 2 above says that $T$ can be
+   crushed to a point without changing the homotopy type of $X$. Moreover, it is easy to
+   check that $X/T$ is a CW complex with a single $0$-cell.
+
+   Later we will see that for a CW complex $X$, if $\pi_k(X)=0$, $k>1$, then $X$ is
+   homotopic to a CW complex with no $k$-cells. \anton{is this right?}
+ \end{example}
+
+ \section{Some Theorems}
+ Chris lectures.
+
+ We will assume we know
+ \begin{itemize}
+   \item $\pi_i(D^n)=0$ for all $i$ since $D^n$ is contractible.
+   \item $\pi_1(S^n)=0$ for $n>1$.
+   \item $\pi_1(S^1)=\ZZ$, generated by $\id:S^1\to S^1$.
+   \item $\pi_i(S^n)=0$ for $i< n$.
+   \item $\pi_n(S^n)=\ZZ$, generated by $\id:S^n\to S^n$.
+   \item If $f:S^n\to S^n$ satisfies $f(-x)=-f(x)$, then $[f]\neq 0\in \pi_n(S^n)$; in
+   fact, $[f]$ must represent an odd integer.
+ \end{itemize}
+ Then we can prove some neat things.
+ \begin{theorem}[Fundamental Theorem of Algebra]
+   Every non-constant $p\in \CC[x]$ has a root in $\CC$.
+ \end{theorem}
+ \begin{proof}
+   Assume not. Say $p$ is of degree $n$. Note that $p_R=p\bigl( \{z| \|z\|=R\} \bigr)$ is
+   a loop in $\CC\smallsetminus \{0\}\simeq S^1$, so it defines an element of
+   $\pi_1(\ZZ)$.\footnote{Since we didn't choose a base point, it only defines a
+   conjugacy class, but $\ZZ$ is abelian, so we get an element.} For $R$ large, it is
+   easy to see that it defines the same element as does $z^n$, which is $n\in \ZZ$.
+   Slowly shrinking $R$ to zero, we get a homotopy of $p_R$ to $p_0$, which is a constant
+   map, corresponding to $0\in \ZZ$. Thus, $n=0$, contradicting the assumption that $p$
+   is non-constant.
+ \end{proof}
+ \begin{theorem}[Brauwer Fixed Point Theorem]
+   Every $h:D^n\to D^n$ has a fixed point.
+ \end{theorem}
+ \begin{proof}
+   Assume not, then define $f:D^n\to S^{n-1}$ by the picture
+   \[
+   \begin{xy}
+     0 *\xycircle(1,1){},
+     (.2,.3) *{\bullet} *+!UL{x},
+     (-.5,-.3) *{\bullet} *+!UL{h(x)};
+     a(47) *{\bullet} *+!DL{f(x)} **@{-}
+   \end{xy}
+   \]
+   It is easy to see that $f$ is continuous and that $f|_{S^n}=\id_{S^n}$. Then we get
+   the following commutative triangle, and its image under $\pi_{n-1}$.
+   \[\xymatrix{
+    S^{n-1} \ar@{^(->}[r] \ar@/_2ex/[rr]_{\id_{S^{n-1}}} & D^n \ar[r]^f & S^{n-1}
+   }\qquad\qquad
+   \xymatrix{
+    \ZZ \ar[r] \ar@/_2ex/[rr]_{\id_\ZZ} & 0 \ar[r]^{f_*} & \ZZ
+   }\]
+   Which is impossible.
+ \end{proof}
+ \begin{theorem}[Invariance of Dimension]
+   $\RR^n\approx \RR^m \Longleftrightarrow n=m$.
+ \end{theorem}
+ \begin{proof}
+   ($\Leftarrow$) is obvious. Let's prove ($\Rightarrow$). Assume
+   $f:\RR^n\xrightarrow{\sim} \RR^m$, then we get a homeomorphism $f:\RR^n\smallsetminus
+   \{0\} \xrightarrow{\sim} \RR^m\smallsetminus\{f(0)\}$. The first is homotopy
+   equivalent to $S^n$ and the second to $S^m$, so it follows that $S^n\simeq S^m$. We
+   may assume $n\le m$. Then $\ZZ=\pi_n(S^n)\cong \pi_n(S^m)$, which is zero if $n<m$. So
+   $n=m$.
+ \end{proof}
+ \begin{theorem}[Borsuk-Ulam]
+   For any $f:S^n\to \RR^n$, there is some $x\in S^n$ so that $f(x)=-f(-x)$.
+ \end{theorem}
+ \begin{proof}
+   If not, define $g:S^n\to S^{n-1}$ by $g(x) = \frac{f(x)-f(-x)}{\|f(x)-f(-x)\|}$. Note
+   that $g(-x)=-g(x)$, so composing with the inclusion $i:S^{n-1}\hookrightarrow S^n$, we
+   get a non-trivial element of $\pi_n(S^n)=\ZZ$. But if $[i\circ g]\neq 0$, then the
+   image $i\circ g(S^n)$ is not contractible in $S^n$, so the image $i(S^{n-1})$ is not
+   contractible in $S^n$. Contradiction.
+ \end{proof}
+ Note that we don't really use much about what $\pi_1$ \emph{is} in these proofs, we just
+ use some functorial properties. So anything else that behaves kind of like $\pi_1$ would
+ work just as well. Later we will define homology and cohomology groups, which serve
+ exactly this purpose.
+
+ \section{Boring class}
+ Peter was sick, but still in class, and asked people to volunteer information about
+ \begin{itemize}
+   \item categories and functors
+   \item exact squences
+   \item cofibrations and Puppe sequences
+   \item covering spaces, fiber bundles, and fibrations
+ \end{itemize}
+ We only talked about the first two.
+
+ \section{More Category stuff, Cofibrations, Fibrations}
+ \begin{definition}
+   An sequence of pointed sets
+   \[
+    (A,a)\xrightarrow{f} (B,b)\xrightarrow{g} (C,c)
+   \]
+   is said to be \emph{exact at $B$} if $\im f = g^{-1}(c)$.
+ \end{definition}
+ Note that if we take these to be groups (with the identity element), we get the usual
+ notion of exactness of a sequence of groups.
+ \begin{definition}
+   A \emph{natural transformation} $\eta:F\to G$ between two functors $F,G:\mathcal{C}\to
+   \mathcal{D}$ is a morphism $\eta(X)$ for each object $X$ in $C$ so that for every
+   $f:X\to Y$, we have
+   \[\xymatrix{
+    F(X) \ar[r]^{\eta(X)} \ar[d]_{Ff} \ar@{}[dr]|{\circlearrowleft} & G(X)\ar[d]^{Gf}\\
+    F(Y) \ar[r]^{\eta(Y)} & G(Y)
+   }\]
+ \end{definition}
+ \begin{example}
+   For any object $X$ in a category $\C$, we get a functor $h^X:\C^\text{op}\to
+   \textbf{Set}$ given by $h^X(Y)=\hom(Y,X)$. Similarly, we get a functor $h_X:\C \to
+   \textbf{Set}$ given by $h_X(Y)=\hom(X,Y)$. We call a functor \emph{representable} if
+   it is isomorphic to $h^X$ or $h_X$ for some $X$.
+ \end{example}
+ \begin{theorem}[Yoneda's Lemma]
+   For any functor $F:\C^\text{op}\to \textrm{\bf Set}$, there is a natural
+   bijection ${\rm Nat}(h^X,F)\cong F(X)$. In particular, taking $F=h^Y$, we see that
+   the functor $h^{-}:\C\to {\rm Fun}(\C^\text{op},\textrm{\bf Set})$ is a fully
+   faithful embedding of categories.
+ \end{theorem}
+ Similarly, we get a fully faithful embedding $h_{-}:\C^\text{op}\to
+ \textrm{Fun}(\C,\textbf{Set})$. This is the Yoneda embedding of $\C^\text{op}$.
+ \begin{proof}
+   Given $\eta\in \textrm{Nat}(h^X,F)$, we have $\eta(X):\hom(X,X)\to F(X)$, so we get an
+   element $a=\eta(X)(\id_X)\in F(X)$. Conversely, given $a\in F(X)$, we construct a
+   natural transformation $\eta$ which takes $f\in h^X(Y)=\hom(Y,X)$ to
+   $\eta(Y)(f)=(Ff)(a)$. Check that these are inverses, and that the bijection is natural
+   in $F$ and $X$. The following diagram should help:
+   \[\raisebox{6.5pc}{$\xymatrix @C=13pc @R=5pc{
+   \id_X \ar@{|->}[d] \ar@{}[dr]|(.1){
+      \xymatrix @!0 @R=3pc @C=6.5pc{
+      \hom(X,X)\ar[d]_{- \circ f} & F(X) \ar[d]^{Ff}\\
+      \hom(Y,X) \ar[r]^(.6){\eta(Y)} & F(Y)}
+   } & a\ar@{|->}[d]\\
+   f \ar@{|->}[r] & (Ff)(a)
+   }$}\qedhere\]
+ \end{proof}
+ Note that representable functors sometimes factor through some other category on their
+ way to \textbf{Set}, i.e.\ there is a natural group structure on $h^X(Y)$ in
+ such a way that the maps $h^X(Z)\to h^X(Y)$ induced by $Y\to X$ are group homomorphisms.
+ \begin{definition}
+   If $\C$ has products, then an object $K$ is a \emph{group object} in $\C$ if there is
+   a maps $m:K\times K\to K$ such that there exist $i:K\to K$ and $1:*\to K$, where $*$
+   is the final object of $\C$ (the empty product) satisfying the following diagrams.
+   \[\xymatrix{
+    {*}\times K\ar[d]_{1\times \id} \ar@{}[r]|(.6){\cong} & K\ar@{}[r]|(.4){\cong} \ar[d]^{\id}
+    & K\times *\ar[d]^{\id\times 1}\\
+    K\times K\ar[r]^(.6)m & K & K\times K \ar[l]_(.6)m
+   }\quad
+   \xymatrix{
+    K\times K \ar[d]_m &
+    K \ar[d]^{\exists !} \ar[r]^(.4){\id\times i} \ar[l]_(.35){i\times \id}
+    & K\times K \ar[d]^m\\
+    K & {*}\ar[r]^1 \ar[l]_1 & K
+   }\quad
+   \xymatrix{
+    K\times K\times K \ar[r]^(.57){m\times \id} \ar[d]_{\id \times m} & K\times K\ar[d]^m\\
+    K\times K\ar[r]^(.6)m & K
+   }\]
+   If we change all the products to coproducts (in particular, change the final object to
+   the initial object) and reverse the arrows, we have the definition of a \emph{cogroup
+   object}.
+ \end{definition}
+ Observe that once $i$ and $1$ exist, they are unique. Note that if $K$ is a group
+ (resp.\ cogroup) object, then $h_K$ (resp. $h^K$) factors trough
+ \textbf{Gp}.\footnote{In fact, $h^K$ factors through \textbf{Gp} exactly when it is a
+ group object in $\textrm{Fun}(\C,\textbf{Set})$, so by Yoneda's Lemma, $h^K$ factors
+ through \textbf{Gp} if and only if $K$ is a group object. Similarly, $h_K$ factors
+ through \textbf{Gp} if and only if $K$ is a cogroup object.} If the multiplication map
+ $m$ is invariant under the ``switch factors'' map, then we says that $K$ is an
+ \emph{abelian} (co)group object. In this case, the representable functors factor through
+ \textbf{Ab}.
+ \begin{definition}
+   An H-group is a group object in \textbf{hTop}. Note that the identity element,
+   inverses, and associativity of the product only work up to homotopy!
+ \end{definition}
+ \begin{example}
+   $(S^n,*)$ is an H-cogroup for $n\ge 1$, with comultiplication given by the ``crush the
+   equator'' map $S^n\to S^n\vee S^n$ and inverse given by ``reflect through the
+   equator'' map $S^n\to S^n$. If $n\ge 2$, then it is an abelian H-cogroup.
+
+   The representable functor $h_{(S^n,*)}$ is $\pi_n:\textbf{hTop}_{pt}\to \C$ is , where
+   $\C=\textbf{Set}$, \textbf{Gp}, or \textbf{Ab} when $n=0$, 1, or $n\ge 2$,
+   respectively.
+ \end{example}
+ \begin{example}
+   Later we'll se that for an abelian group $A$, there are abelian H-groups $K(A,n)$,
+   called \emph{Eilenberg-Maclane} spaces, defined by
+   $\pi_m\bigl(K(A,n)\bigr)=\delta_{m,n} A$. We will define \emph{cohomology functors}
+   $H^n(X,A)$ which will turn out to be equal to $h^{K(A,n)}:\textbf{hTop}_{pt}\to
+   \textbf{Ab}$.
+ \end{example}
+ \begin{definition}
+   A map $i:A\to X$ is a \emph{cofibration} if it has the homotopy extension property,
+   i.e.\ the diagram on the left for all $Y$, $h$, and $\tilde h_0$. This means that
+   any homotopy of maps from $A$ can be extended to a homotopy of maps from $X$, given a
+   starting point.
+   \[\xymatrix{
+    A\ar[d]_{i} \ar[r]^h & Y^I \ar[d]^{0\text{ endpoint}}\\
+    X \ar[r]_{\tilde h_0} \ar@{-->}[ru]^{\exists \tilde h} & Y
+   }\qquad\qquad
+   \xymatrix{
+    Y\ar[r]^{\tilde h_0} \ar[d]_{\id\times \{0\}} & E\ar[d]^p\\
+    Y\times I \ar[r]_{h} \ar@{-->}[ru]^{\exists \tilde h}& B }\] A map $p:E\to B$ is a
+   \emph{fibration} if it satisfies the \emph{homotopy lifting property} (HLP), i.e.\ the
+   diagram on the right for all $Y$, $h$, and $\tilde h_0$. This means that any homotopy
+   of maps to $B$ can be lifted to a homotopy of maps to $E$, given a starting point. We
+   say that $p:E\to B$ is a \emph{Serre fibration} if it satisfies HLP when $Y=D^n$ (or,
+   equivalently, when $Y$ is a CW-complex).
+ \end{definition}
+ If $B$ is a pointed space with base point $b$, and $E\xrightarrow{p} B$ is a fibration,
+ then we define the fiber $F:=p^{-1}(b)$. It turns out that a cofibration is always an
+ inclusion of a closed subset.
+
+ \begin{lemma} \label{Lcofibrationexact}
+   If $i:A\to X$ is a cofibration, then for each pointed space $(Y,y)$ we get an
+   exact sequence of sets
+   \[[X/A,Y]\to [X,Y]\to [A,Y].\]
+ \end{lemma}
+ \begin{proof}
+   It is clear that the composition of maps always lands in the base point of $[A,Y]$. If
+   $f:X\to Y$ is a map such that $f|_A$ homotopic to the constant map $A\to y$. Then we
+   have a homotopy of maps $f|_A\simeq \text{const}_y$ from $A$. Since $i$ is a
+   cofibration, we can extend to a homotopy $f\simeq g$, where $g:X\to Y$ and
+   $g|_A=\text{const}_y$, so $g$ induces a map $X/A\to Y$. This proves exactness.
+ \end{proof}
+ \begin{lemma} \label{L:fibrationexact}
+   If $p:E\to B$ is a fibration with fiber $F$, then for each $Y$, we get an exact
+   sequence of sets
+   \[[Y,F]\to [Y,E]\to [Y,B].\]
+ \end{lemma}
+ \begin{proof}
+   It is clear that the composition of maps always lands in the base point of $[Y,B]$. If
+   $f:Y\to E$ is a map such that $p\circ f\simeq \text{const}_b$, then we can lift to a
+   homotopy $f\simeq g:Y\to E$, where $p\circ g=\text{const}_b$. That is, the image of
+   $g$ is in $F$. This proves exactness.
+ \end{proof}
+
+ \begin{lemma}
+   A pushout of a cofibration is a cofibration. A pull back of a (Serre) fibration is a
+   (Serre) fibration.
+ \end{lemma}
+ \begin{proof}
+   The curved dashed arrows exist because $A\to X$ is a cofibration and $E\to B$ is a
+   (Serre) fibration (with $Y$ CW, in the Serre fibration case).
+   \[\xymatrix{
+    A \ar[r] \ar[d] \ar@{}[dr]|(.75)\po & A'\ar[d] \ar[r] &  Y^I\ar[d] \\
+    X\ar[r] \ar@/^/@{-->}[rru]|!{[ru];[r]}\hole & X'\ar[r] \ar@{-->}[ru] & Y
+    %\ar@{.>} `d[r] `{[rrru]-(.57,0)} `[rru] [rru]
+   }\qquad
+   \xymatrix{
+    Y\ar[d] \ar[r] & E'\ar[d] \ar@{}[dr]|(.25)\pb \ar[r] & E\ar[d]\\
+    Y\times I\ar[r] \ar@/_/@{-->}[rru]|!{[ru];[r]}\hole \ar@{-->}[ru] & B'\ar[r] & B
+   }\]
+   The straight dashed arrows exist by the universal properties of pull-back and
+   push-out.
+ \end{proof}
+
+% \begin{theorem}\label{T:fibrationLEShomotopy}
+%   If $F\to E\xrightarrow{p} B$ is a Serre fibration, then there is a long exact sequence
+%   \[
+%    \pi_{n+1}(B,b)\xrightarrow{\ \delta\ }
+%    \pi_n(F,e)\xrightarrow{i_*} \pi_n(E,e)\xrightarrow{p_*} \pi_n(B,b)\xrightarrow{\ \delta\ }
+%     \pi_{n-1}(F,e)\to \cdots
+%    \to \pi_0(B,b)
+%   \]
+%%   \[\xymatrix{
+%%    & \pi_n(F,e) & \pi_n(E,e) & \pi_n(B,b)
+%%    \ar `r[d]
+%%        `[ll]
+%%        `l[dlll]
+%%        `d[dll]
+%%        [dll]\\
+%%   & \pi_{n-1}(F,e) & &
+%%   }\]
+% \end{theorem}
+% \begin{proof}
+%   Lemma \ref{L:fibrationexact} proves exactness at $\pi_n(E,e)$ for all $n$ (taking $Y$
+%   to be $S^n$).
+%
+%   What is the map $\delta$? If we have $f:(I^n,\partial I^n)\to (B,b)$,
+%   then we can lift a face of $I^n$ to the point $e\in E$. Since $p:E\to B$ is a
+%   fibration, we get a lift $\tilde f:I^n\to E$ which sends $\partial I^n\approx S^{n-1}$
+%   to $F=p^{-1}(b)$, giving us an element of $\pi_{n-1}(F,e)$. If $\tilde f$ and $\tilde
+%   f'$ are different lifts, then we have the identity homotopy $p\circ \tilde f\simeq
+%   p\circ \tilde f'$, which lifts to a homotopy $\tilde f\simeq \tilde f'$ which
+%   restricts to a homotopy $\tilde f|_{\partial I^n}\simeq \tilde f'|_{\partial I^n}$, so
+%   the map $\delta$ is well defined.
+%
+%   By construction, anything in the image of $\delta$ is homotopic to the constant map in
+%   $E$ (via $\tilde f$), so $i_*\circ \delta$ is the constant map. Moreover, if $g:S^n\to
+%   F$ is homotopic to the constant map in $E$ via $h:S^n\times I\to E$, then $p\circ
+%   h$ is a map $S^{n+1}\to B$ whose image under $\delta$ is $g$. This proves exactness at
+%   $\pi_n(F,e)$.
+%
+%   Finally, if $g:(I^n,\partial I^n)\to B$ such that $\delta(g)$ is homotopic to the
+%   constant map via $h:\partial I^n \times I\to F$, then we can patch together $\tilde g$
+%   and $h$ go get a map $(S^n,*)\to (E,e)$ which projects to $g$. This proves exactness
+%   at $\pi_n(E,e)$.
+% \end{proof}
+
+ \section{Fiber bundles and Covering spaces}
+ \begin{definition}
+   A \emph{fiber bundle} is a surjective map $p:E\to B$ such that every $b\in B$ has an
+   open neighborhood $U$ and a homeomorphism $f:U\times p^{-1}(b)\to p^{-1}(U)$ with
+   $p\circ f$ equal to the projection onto the first coordinate. \xymatrix @ur{
+    U\times p^{-1}(b)\ar[dr]_(.55)f^(.55)\approx \ar[d]_{p_1} \\ U & p^{-1}(U)\ar[l]^p
+   }
+ \end{definition}
+ Note that $\xymatrix @-1pc @ur {E'\ar[d]_{p'} \ar[dr]^f \\ B & E\ar[l]^p}$ commutes if and
+ only if $f\bigl((p')^{-1}(b)\bigr)\subseteq p^{-1}(b)$.
+ \begin{lemma}
+   If $B$ is connected, then all the fibers (inverse images of points) are homeomorphic.
+ \end{lemma}
+ \begin{proof}
+   Let $b_0\in B$, then $\{b\in B|F_b\approx F_{b_0}\}$ and $\{b\in B|F_b\not\approx
+   F_{b_0}\}$ are disjoint open sets covering $B$, and the first is non-empty, so it must
+   be all of $B$.
+ \end{proof}
+ \begin{definition}
+   A fiber bundle is called a \emph{covering} if the fibers are discrete.
+ \end{definition}
+ \begin{definition}
+   A \emph{vector bundle} is a fiber bundle where each fiber comes with a vector space
+   structure, and the local trivialization maps $f:U\times
+   p^{-1}(b)\xrightarrow{\approx} p^{-1}(U)$ are required to be linear on fibers.
+ \end{definition}
+ For example, if $M$ is a smooth manifold, then the tangent bundle $TM$ is a vector
+ bundle.
+ \begin{definition}
+   If $G$ is a topological group, then a \emph{principal $G$-bundle} is a fiber bundle
+   where each fiber comes with a $G$-action, and we have local trivialization maps
+   $f:U\times G\xrightarrow{\approx} p^{-1}(U)$ which are $G$-equivariant on fibers.
+ \end{definition}
+ \begin{example}
+   $\ZZ\to \RR \to S^1$ is a principal $\ZZ$-bundle and a covering. $\ZZ/n\ZZ
+   \hookrightarrow S^1 \to S^1$ is principal $\ZZ/n\ZZ$-bundle and a covering.
+ \end{example}
+ \section{Fiber bundles are Serre fibrations}
+ \begin{lemma}\label{L:RelIsomorphismI^n}
+   $\bigl(I^n\times I,I^n\times \{0\}\bigr) \approx \bigl( I^n\times I, I^n\times \{0\}
+   \cup \partial I^n\times I\bigr)$. That is, there is a homeomorphism $I^n\times I\to
+   I^n\times I$ sending $I^n\times \{0\}$ to $I^n\times \{0\} \cup \partial I^n\times I$.
+   \qquad
+   $\rule{.3pt}{12.2pt}\rule{12pt}{1pt}\llap{\rule[12pt]{12pt}{.3pt}}\rule{.3pt}{12.2pt}
+   \approx
+   \rule{1pt}{12.2pt}\rule{12pt}{1pt}\llap{\rule[12pt]{12pt}{.3pt}}\rule{1pt}{12.2pt}$
+ \end{lemma}
+ \begin{theorem}
+   If $p:E\to B$ is a fiber bundle and $(X,A)$ is a relative CW-complex,\footnote{This
+   means that $A$ is an arbitrary topological space, and $X$ is obtained from $A$ by
+   attaching cells of increasing dimensions.} Then
+   \[\xymatrix{
+    X\times \{0\} \cup A \times I \ar@{}[d]|{\cap\rule{.3pt}{5pt}} \ar[r] & E\ar[d]^p\\
+    X\times I\ar[r] \ar@{-->}[ur]_{\exists} & B
+   }\]
+    In particular, any fiber bundle is a Serre fibration. Moreover, if $p:E\to B$ is a
+    covering, then the dashed arrow is unique.
+ \end{theorem}
+ \begin{proof}
+   First we do the non-relative case (i.e.\ the case $A=\varnothing$).
+
+   \underline{Step 1: Trivial bundles}: If $E=B\times F$, then use \quad
+   $\xymatrix @C=4pc {
+    X\times \{0\} \ar[r]^{(f,g)} \ar@{}[d]|{\cap\rule{.3pt}{5pt}} & B\times F\ar[d]^{p_1}\\
+    X\times I \ar[r]^h \ar@{-->}[ur]|{(h,g\circ p_1)} & B }$ where $p_1$ always means
+   ``project to the first coordinate''. Note that if $F$ is discrete, then $F^{X\times
+   I}\approx (F^I)^X=F^X$, so $g\circ p_1$ is the unique map $X\times I\to F$ compatible
+   with $g:X\times \{0\}\to F$.
+
+   \marginpar{$\xymatrix{ \varnothing \ar[r] \ar[d] & E\ar[d]^p\\ \varnothing \ar[r]
+   \ar@{-->}[ur] & B}$}
+   \underline{Step 2: $X=I^n\approx D^n$}: We do this by induction
+   on $n$. If $n=-1$, then $I^n=\varnothing$, so the statement is vacuous (see margin).
+   Now assume we can lift $I^{n-1}\times I$, given the lift on $I^{n-1}\times \{0\}$ (and
+   the lift is unique if $F$ is discrete). Let $\{U_i\}$ be a trivializing open cover of
+   $B$, and let $\varepsilon$ be the Lebesgue number of the pull-back cover under the map
+   $I^n\times I\to B$, so that the image of any little cube of side length $\varepsilon$
+   lies entirely in one of the $U_i$. Now cut $I^n\times I$ into cubes of side length
+   $\varepsilon$ and look at the following picture; the black and dark gray indicates
+   part of the domain where we have lifted $I^n\times I\to B$.
+   \[
+   \raisebox{-.5cm}{
+   \begin{pspicture}(-.2,-.5)(4.5,2)
+     \psframe[linecolor=lightgray, fillstyle=crosshatch, hatchcolor=lightgray,
+              hatchangle=0, hatchwidth=.2mm, hatchsep=3.8mm](0,0)(2,2)
+     \psline[linewidth=.4mm](0,0)(2,0)
+     \uput[180](0,1){$I$} \uput[-90](1,0){$I^n$}
+     \psline{->}(2.5,1)(4,1) \uput[90](3.25,1){Induct} \uput[-90](3.25,1){on $n$}
+   \end{pspicture}}
+   \begin{pspicture}(0,0)(4.5,2)
+     \psframe[linecolor=lightgray, fillstyle=crosshatch, hatchcolor=lightgray,
+              hatchangle=0, hatchwidth=.2mm, hatchsep=3.8mm](0,0)(2,2)
+     \psframe[linewidth=0pt, fillstyle=vlines,
+              hatchangle=0, hatchwidth=.4mm, hatchsep=3.6mm](0,0)(2,2)
+     \psline[linewidth=.4mm](0,2)(0,0)(2,0)(2,2)
+     \psline{->}(2.5,1)(4,1) \uput[90](3.25,1){Lemma} \uput[-90](3.25,1){+Step 1}
+   \end{pspicture}
+   \begin{pspicture}(0,0)(4.5,2)
+     \psframe[linecolor=lightgray, fillstyle=crosshatch, hatchcolor=lightgray,
+              hatchangle=0, hatchwidth=.2mm, hatchsep=3.8mm](0,0)(2,2)
+     \psframe[linewidth=0pt, fillstyle=vlines,
+              hatchangle=0, hatchwidth=.4mm, hatchsep=3.6mm](0,0)(2,2)
+     \psline[linewidth=.4mm](0,2)(0,0)(2,0)(2,2)
+     \psframe[fillstyle=solid, fillcolor=gray](0,0)(.4,.4)
+     \psline{->}(2.5,1)(4,1) \uput[90](3.25,1){Induct}
+   \end{pspicture}
+   \begin{pspicture}(0,0)(2,2)
+     \psframe[fillstyle=solid, fillcolor=gray](0,0)(2,2)
+     \psframe[fillstyle=crosshatch, hatchangle=0, hatchwidth=.2mm, hatchsep=3.8mm](0,0)(2,2)
+   \end{pspicture}
+   \]
+   By induction on $n$, we can lift on a grid of $I^{n-1}\times I$, cutting $I^n\times I$
+   into narrow columns of width $\varepsilon$. By Lemma \ref{L:RelIsomorphismI^n},
+   lifting the $\varepsilon$-size $I^n\times I$ given the lift on $I^n\times \{0\}\cup
+   \partial I^n \times I$ is the same as lifting $I^n\times I$ given the lift on
+   $I^n\times \{0\}$, which we know how to do by Step 1 because the bundle is trivial
+   over each $U_i$. If $F$ is discrete, then all the intermediate lifts are unique, so
+   the lift is unique.
+
+   \underline{Step 3: $X$ a CW complex}: If $X$ is an arbitrary CW complex, assume by
+   induction that we've lifted $h:X\times I\to B$ to $\tilde h:X^{(n-1)}\times I\to E$.
+   \[\xymatrix{
+   \coprod S^n\times I \cup D^n\times \{0\} \ar[r] \ar[d] & E\ar[d]\\
+   \coprod D^n\times I \ar@{-->}[ur] \ar[r] & B
+   }\qquad \xymatrix{
+    \coprod S^n\times I \ar[r] \ar[d] \ar@{}[dr]|(.75)\po &
+    X^{(n-1)}\times I \ar[d] \ar@/^/[dr]^(.6){\txt{already\\ have}}\\
+    \coprod D^n\times I \ar[r] \ar@/_1pc/[rr]_{\txt{given by Step 2}}
+    & X^{(n)}\times I \ar@{-->}[r]^(.6){\exists !} & E
+   }\]
+   We use Step 2 and Lemma
+   \ref{L:RelIsomorphismI^n} (keeping in mind that $D^n\approx I^n$) to get the dashed
+   arrow in the left diagram, which is the bottom curved arrow in the right diagram. By
+   the universal property of push-out, we get a lift $X^{(n)}\times I \to E$. Now we use
+   the usual limiting argument for CW complexes to get a lift $X\times I \to E$. As
+   usual, it is clear that uniqueness holds if $F$ is discrete.
+
+   \medskip
+   Note that in Step 3, we didn't use anything about $X^{(n-1)}$; it could have been
+   completely general, so the proof applies to the relative case.
+ \end{proof}
+
+ \begin{corollary}
+   Fiber bundles have the long exact sequence of homotopy groups described in Theorem
+   \ref{C:fibrationLES}.
+ \end{corollary}
+ \begin{corollary}[to the Corollary]
+   If $F$ is discrete, then $p_*:\pi_n(E,e)\xrightarrow{\sim} \pi_n(B,b)$ for $n>1$.
+   Moreover, if $E$ is connected, then $\pi_1(E)\hookrightarrow \pi_1(B)$ has index
+   $|F|$.
+ \end{corollary}
+ Note that if $F$ is discrete and $E$ is connected, then the connecting map $\delta:
+ \pi_1(B,b)\to \pi_0(F,e)=F$ is surjective, yielding a transitive action of $\pi_1(B,b)$
+ on $F$.
+
+ \section{Long cofibration and fibration sequences}
+ We denote the suspension of $X$ by $\Sigma X=X\times I/\sim$, with $(x,1)\sim (x',1)$
+ and $(x,0)\sim (x',0)$. We denote the reduced suspension by $SX=S^1\wedge X$; this is
+ the suspension, with the additional identification $(x_0,s)\sim (x_0,t)$ for some base
+ point $x_0\in X$. Note that $\Sigma X\simeq SX$.
+ \begin{lemma}
+   If $X$ and $Y$ are compact, then $X\wedge Y$ is the one point compactification of
+   $(X\smallsetminus \{x\})\times (Y\smallsetminus \{y\})$.
+ \end{lemma}
+ In particular $S^n\wedge S^m\approx S^{n+m}$ because $\RR^n\times \RR^m\approx
+ \RR^{n+m}$.
+ \begin{lemma}
+   If $i:A\to X$ is a cofibration, then there is a long cofibration sequence (with maps
+   defined up to homotopy)
+   \[
+    A\xrightarrow{i} X\to X/A \to \Sigma A \xrightarrow{\Sigma i} \Sigma X\to \Sigma
+    (X/A) \to \Sigma^2 A\xrightarrow{\Sigma^2 i}\cdots.
+   \]
+   That is, any three consecutive terms are \emph{homotopic} to a cofibration triple.
+ \end{lemma}
+ \begin{proof}
+   We know that $A\to X\to X/A$ is a cofibration. We have $X/A\simeq X\cup_{A} C(A)$,
+   where $C(A)$ is the cone on $A$. Then it is clear that $X\to X\cup_A C(A)\to \Sigma A$
+   is a cofibration. Similarly, $\Sigma A \simeq \bigl(X\cup_A C(A)\bigr)\cup_X C(X)$,
+   and $\bigl(X\cup_A C(A)\bigr)\to \bigl(X\cup_A C(A)\bigr)\cup_X C(X) \to \Sigma X$ is
+   a cofibration. Finally, $\Sigma$ is a functor which preserves cofibrations, so we're
+   done.
+   \[\raisebox{5pc}{\xymatrix @R=.3pc{
+   A \ar@{}[d]|\parallel & X \ar@{}[d]|\parallel & X/A \ar@{}[d]|(.4){|\wr} & \Sigma A
+   \ar@{}[d]|(.4){|\wr} & \Sigma
+   X \ar@{}[d]|\parallel\\
+   \rule[1pt]{.5cm}{1pt} \ar[r] & \rule[1pt]{1cm}{.4pt} \llap{\rule[.7pt]{.5cm}{1pt}}
+   \ar[r] & \raisebox{8mm}{\begin{pspicture}(0,0)(1,.75)
+     \psline[linewidth=.4pt](0,0)(1,0) \psline[linewidth=1pt](.5,0)(1,0)(.75,.5)(.5,0)
+   \end{pspicture}} \ar[r] &
+   \begin{pspicture}(0,-1)(1,.75)
+     \psline[linewidth=.4pt](0,0)(1,0)(.5,-1)(0,0) \psline[linewidth=1pt](.5,0)(1,0)(.75,.5)(.5,0)
+     \psline[linewidth=.4pt](.1,-.2)(.9,-.2)
+   \end{pspicture} \ar[r] &
+   \raisebox{-17.5mm}{\begin{pspicture}(0,-.8)(.8,.3)
+     \psline[linewidth=.4pt](0,0)(.8,0)(.4,.3)(0,0)(.4,-.8)(.8,0) \psdots(.4,.3)
+   \end{pspicture}}
+   }}\qedhere\]
+ \end{proof}
+ \begin{corollary}
+   For any pointed space $Y$, by Lemma \ref{Lcofibrationexact}, we have a long exact
+   sequence
+   \[
+    \cdots \to[S(X/A),Y]_{pt} \to[SX,Y]_{pt} \to[S A,Y]_{pt} \to[X/A,Y]_{pt} \to[X,Y]_{pt} \to[A,Y]_{pt}
+   \]
+ \end{corollary}
+ \begin{remark}
+   This sequence is called a \emph{Puppe sequence}. If we take $Y=K(A,n)$, then we get
+   the long exact sequence in cohomology for the pair $(X,A)$. To see this, note that
+   $\pi_{i+1}(X)=[S^{i+1},X]=[S^i,\W X]=\pi_i(\W X)$. In particular, $\W
+   K(A,n)=K(A,n-1)$, so $[S^k X,K(A,n)]=[X,\W^k
+   K(A,n)]=[X,K(A,n-k)]=H^{n-k}(X,A)$.\anton{clean}
+ \end{remark}
+
+ ``Dually'', we get
+ \begin{lemma}
+   If $F\to E\to B$ is a fibration, then there is a long fibration sequence
+   \[
+    \cdots\to \W^3 B \to \W^2 F\to \W^2 E\to \W^2 B\to \W F\to \W E\to \W B\to F\to E\to B
+   \]
+   That is, any three consecutive terms are \emph{homotopic} to a fibration triple.
+ \end{lemma}
+ \begin{proof}
+   \anton{do}
+ \end{proof}
+ \begin{corollary} \label{C:fibrationLES}
+   For any pointed space $Y$, by Lemma \ref{L:fibrationexact}, we get the long exact
+   sequence
+   \[
+    \cdots\to [Y,\W^2 E]\to [Y,\W^2 B]\to [Y,\W F]\to [Y,\W E]\to [Y,\W B]\to [Y,F\to E]\to
+    [Y,B]
+   \]
+ \end{corollary}
+ In particular, taking $Y=S^0$, and noting that $[S^0,\W^n X]=[S^n,X]$, we get the long
+ exact sequence in homotopy groups.\anton{clean?}
+
+ \section{Some equivalences of categories}
+ We'll prove the following theorem later. $\textbf{hCW}(n)$ is the category of homotopy
+ classes of CW complexes $X$ with $\pi_k(X)=0$ for $k\neq n$.
+ \begin{theorem}
+   $\pi_n$ is an equivalence of categories $\textrm{\bf hCW}(n)\to\textrm{\bf Ab}$, with
+   inverse $K(-,n)$.
+ \end{theorem}
+ In particular, $K(A,n)$ is well-defined up to homotopy is always an H-group.
+ \begin{definition}
+   A functor $F:\C\to \D$ is an \emph{equivalence of categories} if there is a functor
+   $G:\D\to \C$ so that $F\circ G$ (resp.~$G\circ F$) is naturally isomorphic to $\id_\D$
+   (resp.~$\id_\C$).
+ \end{definition}
+ \begin{lemma}
+   A functor $F:\C\to \D$ is an equivalence of categories if and only if it is
+   essentially surjective (the image contains an element from each isomorphism class in
+   $\D$) and for every pair of objects $c_0$ and $c_1$ of $\C$, $F$ induces a bijection
+   $\hom_\C(c_0,c_1)\xrightarrow{\sim} \hom_\D(Fc_0,Fc_1)$.
+ \end{lemma}
+ \begin{proof}
+   \anton{}
+ \end{proof}
+ Note that this lemma constructs the inverse functor.
+
+ \begin{lemma}
+   If $F\to E\to B$ is a covering, then $\pi_1(B)$ acts on $F$.
+ \end{lemma}
+ \begin{proof}
+   \anton{follows from the LES}
+ \end{proof}
+ \begin{lemma}
+   If $B$ is path connected, locally path connected, and semi-locally simply
+   connected,\footnote{For every point $x\in B$ and every neighborhood $V$ of $x$, there
+   is a neighborhood $U\subseteq V$ of $x$ so that any loop in $U$ is homotopic to a
+   constant loop \emph{in $B$} (the homotopy may go outside of $U$). A connected CW
+   complex will have all these connectivity conditions.} then $B$ has a universal
+   covering space.
+ \end{lemma}
+ \begin{proof}[Not a Proof]
+   Define $\tilde E$ to be the set of paths in $B$ starting at $b$ modulo homotopy rel
+   endpoints. Then we have a map $\tilde E\to B$, sending a path to its other endpoint.
+
+   Even if $B$ satisfies the conditions of the Lemma, this is not always a covering.
+   Sometimes you have to change the topology on $\tilde E$ to make it the universal
+   cover. If $B$ is metrizable, then $\tilde E$ does the trick as is.
+ \end{proof}
+ Let $\textbf{Cov}(B)$ be the category of covering spaces of $B$, and let
+ $G$-\textbf{Set} be the category of sets with a $G$ action (and morphisms are
+ equivariant set maps).
+ \begin{theorem}
+   If $B$ is path connected, locally path connected, and semi-locally simply connected,
+   then there is an equivalence of categories $\textrm{\bf Cov}(B)\to
+   \pi_1(B)\textrm{-\bf Set}$, given by $E\mapsto F$.
+ \end{theorem}
+ \begin{proof}[``Proof'']
+   The inverse functor is given by $F\mapsto \tilde E\times_{\pi_1(B)} F$.
+ \end{proof}
+ \begin{remark}
+   Any bundle $E\to B$ with fiber $F$ is isomorphic to $P\times_G F$ for some group
+   $G\subseteq \text{Homeo}(F)$ and some principal $G$ bundle $P\to B$. Thus, if you
+   understand principal bundles, you understand all bundles.
+ \end{remark}
+ \begin{corollary}
+   If $B$ is as above, then $E$ is connected if and only if the $\pi_1(B)$ action on $F$
+   is transitive.
+ \end{corollary}
+ \begin{proof}
+   The connected coverings of $B$ are exactly the ones which cannot be written as
+   coproducts (disjoint unions) of others. The $\pi_1(B)$-sets that cannot be written as
+   coproducts (disjoint unions) of others are exactly those for which the action is
+   transitive.
+ \end{proof}
+ Note that if $E$ is connected, then the action of $\pi_1(B)$ on $F$ is transitive, so
+ $F\cong \pi_1(B)/U$, where $U$ is the subgroup of $\pi_1(B)$ that stabilizes $e_0\in F$.
+
+
+ $\rho:G\to GL(V)$ a representation, and $P\to B$ a principal $G$-bundle, then $P\times_G
+ V\to B$ is a vector bundle! \anton{}
+
+ \begin{corollary}
+   $E\to B$ has a section if and only if $F$ has a $\pi_1(B)$-fixed point. In fact, there
+   is a bijection between sections and fixed points.
+ \end{corollary}
+ \begin{proof}
+   A section is a bundle map from the trivial bundle $B\xrightarrow{\id} B$ to $E\to B$.
+   Under the equivalence of categories, this is a $\pi_1(B)$-equivariant map from the one
+   point $\pi_1(B)$-set to $F$, i.e.~a fixed point.
+ \end{proof}
+ \begin{corollary}
+   If $\pi_1(B)$ is trivial, then all covers of $B$ are trivial.
+ \end{corollary}
+ \begin{corollary}
+   Isomorphism classes of connected covers of $B$ are in bijection with subgroups of
+   $\pi_1(B)$ up to conjugation.
+ \end{corollary}
+ \begin{proof}
+   The first is $\pi_0\bigl(\textbf{Cov}_\text{conn}(B)\bigr)$, and the second is
+   $\pi_0\bigl( \pi_1(B)\text{-}\textbf{Set}_\text{trans}\bigr)$. These sets are in
+   bijection by the equivalence of categories.
+ \end{proof}
+ \begin{corollary}
+   Isomorphism classes of connected covers of $B$ (with base point) are in bijection with
+   subgroups of $\pi_1(B)$.
+ \end{corollary}
+ The subgroup corresponding to $E\to B$ is the stabilizer of the base point. This is
+ sometimes called ``Galois theory for coverings''.
+
+ \section{Finally Homology}
+ We'll define simplicial homology on $\Delta$-sets, then singular homology, which will
+ work for all topological spaces, but will be monstrous. Then we'll define cellular
+ homology, which is the awesomest homology theory for calculating (but only for CW
+ complexes). We won't cover \v Cech cohomology or its generalization, sheaf cohomology.
+
+ A homology theory is usually defined by using a topological space to produce a
+\emph{chain complex}, a sequence of abelian groups
+ \[
+    \cdots \xrightarrow{d_{n+2}} C_{n+1}\xrightarrow{d_{n+1}} C_n\xrightarrow{d_n} C_{n-1} \xrightarrow{d_{n-1}}\cdots
+ \]
+ such that $d_n\circ d_{n+1}=0$ for all $n$. We call the $d_n$ \emph{boundary operators}.
+ We define the $n$-th \emph{homology} of the chain complex to be $\ker d_{n}/\im
+ d_{n+1}$, and call this the $n$-th homology of the topological space we started with.
+
+ \subsection*{Relation to homotopy}
+ We seek to define functors $H_n:\textbf{hTop}\to \textbf{Ab}$ which satisfy some nice
+ properties (the Eilenberg-Steenrod axioms). From these properties, one can prove that
+ $H_n(S^n)\cong \ZZ$. This allows us to define the \emph{Hurewicz map} $\phi:\pi_n(X)\to
+ H_n(X)$. Given some $f:S^n\to X$, we get an induced map $f_*:H_n(S^n)\cong \ZZ\to
+ H_n(X)$. We define $\phi([f])$ to be $f_*(1)\in H_n(X)$.
+ \begin{theorem}[Hurewicz]
+   $H_0(X)$ is the free abelian group on $\pi_0(X)$. If $X$ is 0-connected, $H_1(X)$ is
+   the abelianization of $\pi_1(X)$. If $X$ is $(n-1)$-connected with $n\ge 2$, then the
+   Hurewicz map $\pi_n(X)\to H_n(X)$ is an isomorphism.
+ \end{theorem}
+ In fact, there is a (stronger) relative version.
+ \begin{theorem}[Hurewicz]
+   If $f:X\to Y$ induces isomorphisms on $\pi_i$ for $i\le n$, then it induces
+   isomorphisms on $H_i$ for $i\le n$. If $X$ and $Y$ are 1-connected, then the converse
+   is true.
+ \end{theorem}
+
+ \section{Simplicial Homology}
+
+% Poincar\'e defined homology about 100 years ago (before the definition of a topological
+% space!) using Riemann surfaces and polyhedra. Roughly, given a polyhedron, we'd like to
+% build a chain complex out of it with
+
+ A \emph{simplicial complex} is a set obtained by gluing together simplices along their
+ faces. An $n$-dimensional simplex has $n+1$ faces which are subsimplices. We can encode
+ the gluing information in a \emph{$\Delta$-set}.
+ \begin{definition}
+   A \emph{$\Delta$-set} is a sequence of sets $S_n$, with maps $d^n_i:S_n\to S_{n-1}$
+   for $0\le i\le n$ that satisfy the relation $d_j\circ d_i = d_{i-1}\circ d_j$ for
+   $j<i$.
+ \end{definition}
+ From a $\Delta$-set, we can produce a \emph{geometric realization} $|S_\bullet|$ as in
+ the homework.
+
+ Some facts:
+ \begin{itemize}
+   \item \underline{Whitehead's Theorem}: If $X$ and $Y$ are CW complexes and $f:X\to Y$
+   is a \emph{weak equivalence} ($f$ induces isomorphisms $\pi_n(X)\to \pi_n(Y)$ for all
+   $n$), then $f$ is a homotopy equivalence.
+   \item Any CW complex is homotopy equivalent to some $|S_\bullet|$.
+   \item Given \emph{any} topological space $X$, there is a canonical CW complex $X'$ and
+   a weak homotopy equivalence $X'\to X$.
+ \end{itemize}
+
+ Given a $\Delta$-set $S_\bullet$, we define a chain complex by setting $C_n=\ZZ\cdot
+ S_n$, the free abelian group on the ``$n$-simplices'', with $d_n = \sum_{i=0}^n (-1)^i
+ d^n_i$, where the maps $d^n_i$ have been extended linearly. It is a standard exercise to
+ check that $d_{n}\circ d_{n-1}=0$. We define the \emph{simplicial homology} of
+ $S_\bullet$ (or $|S_\bullet|$) to be the homology of this chain complex.
+
+ It is true but not at all obvious that if $|S_\bullet|\approx |T_\bullet|$, then
+ $S_\bullet$ and $T_\bullet$ produce the same homology groups. One can show that if
+ $T_\bullet$ is a refinement of $S_\bullet$, then this holds. For a long time, people
+ conjectured that any two simplicial decompositions of a space, there exists a common
+ refinement. This conjecture, called the Hauptvermutung, would prove the result. However,
+ the Hauptvermutung is false! This was demonstrated by Milnor around 1960.
+
+ \section{Singular Homology}
+ The standard $n$-simplex is $\Delta^n = \{\mathbf{x}\in \RR^{n+1}|x_i\ge 0\text{ for all
+ $i$ and }\sum x_i=1\}$.
+ \begin{definition}
+   The singular $\Delta$-set $\Delta_\bullet(X)$ of a topological space $X$ has
+   $\Delta_n(X)=\{\text{continuous maps }\sigma:\Delta^n\to X\}$ with the obvious
+   boundary maps.
+ \end{definition}
+ \begin{definition}
+   The \emph{singular homology} of a topological space $X$ is the simplicial homology of
+   $\Delta_\bullet(X)$.
+ \end{definition}
+ Thus, $H_n$ is the composition of functors
+ \[
+    H_n: \textbf{Top}\xrightarrow{\Delta_\bullet} \Delta\text{-}\textbf{Set}
+    \xrightarrow{\text{``free''}} \textbf{Chain} \xrightarrow{\text{$n$-th homology}}
+    \textbf{Ab}.
+ \]
+ We will denote by $S_*(X)$ the singular chain complex $C_*(\Delta_\bullet(X))$ of $X$.
+ \begin{lemma}
+   $H_0(X)=\ZZ\cdot \pi_0(X)$.
+ \end{lemma}
+ \begin{proof}
+   $H_0(X) = \coker\bigl(\ZZ[\sigma:I\to X]\xrightarrow{d} \ZZ[pt\to X]\bigr)$, where
+   $d(\sigma)=\sigma(1)-\sigma(0)$. Define a map $H_0(X) = S_0(X)/\im d \to \ZZ\cdot
+   \pi_0(X)$ by sending $x\in X$ (viewed as a map $pt\to X$) to the connected component
+   of $x$. The map is clearly surjective. If there is some linear combination in the
+   kernel, then each path component has as many pluses as minuses, so you can match them
+   up with paths, so that combination is in the image of $d$. Thus, the map is an
+   isomorphism.
+ \end{proof}
+ \begin{example}\label{dimensionAxiom}
+   If $X$ is a point, then $S_i(X)=\ZZ$ for each $i\ge 0$ because there is only one map
+   from $\Delta^i$ to a point. $d^n$ is an alternating sum of $n+1$ identity maps, so the
+   singular chain complex is
+   \[\cdots
+    \xrightarrow{0} \overset{S_4}{\ZZ}
+    \xrightarrow{1} \overset{S_3}{\ZZ}
+    \xrightarrow{0} \overset{S_2}{\ZZ}
+    \xrightarrow{1} \overset{S_1}{\ZZ}
+    \xrightarrow{0} \overset{S_0}{\ZZ}
+   \]
+   so $H_n(X) = \begin{cases}
+     \ZZ & n=0\\
+     0 & n\neq 0
+   \end{cases}$
+ \end{example}
+ \begin{definition}
+   An $n$-dimensional manifold $M$ is \emph{orientable}\footnote{This is really the
+   definition of $\ZZ$-orientable. See Definition \ref{Def:orient} for a more general
+   definition.} if $H_n(M)\cong \ZZ$. In this case, an \emph{orientation} of $M$ is a
+   choice of generator for $H_n(M)$.
+ \end{definition}
+ \begin{theorem}\label{T:DeltaGeomAdjunction}
+   There is a natural adjunction
+   \[
+    \hom_\textrm{\bf hTop}(|S_\bullet|,X) \cong \hom_{\Delta\textrm{-\bf Set}}\bigl(S_\bullet,
+    \Delta_\bullet (X)\bigr).
+   \]
+   The natural map $S_\bullet\to \Delta_\bullet( |S_\bullet|)$ induces isomorphisms on
+   homology, and the natural map $|\Delta_\bullet(X)|\to X$ is a weak equivalence.
+ \end{theorem}
+ It follows that the simplicial homology of $S_\bullet$ is equal to the singular homology
+ of $|S_\bullet|$, a handy fact for calculation. Also, for any space $X$, we get a CW
+ complex $X':=|\Delta_\bullet(X)|$ and a weak equivalence $X'\to X$.
+
+ \section{Eilenberg-Steenrod Axioms}
+ It turns out that any sequence of functors satisfying the following axioms are naturally
+ isomorphic to singular homology. In practice, one can use these axioms to compute
+ homology. We will have to prove that singular homology satisfies these axioms to verify
+ that such functors exist.
+ \begin{enumerate}
+   \item (Homotopy axiom) The functors $H_n:\textbf{Top}\to \textbf{Ab}$ factor through
+   \textbf{hTop}.
+   \item \marginpar{\hspace*{-1em}
+     $\xymatrix @-.5pc @dr{U\cap V \ar[d]^{j_U} \ar[r]_{j_V} & V
+     \ar[d]_{i_V}\\ U \ar[r]^{i_U} & U\cup V}$}
+   (Mayer-Vietoris axiom) If $U, V\subseteq X$ are open sets, then there is a
+   natural long exact sequence
+   \[
+    \cdots \to H_n(U\cap V)\xrightarrow{(j_U,j_V)} H_n(U)\oplus
+    H_n(V)\xrightarrow{i_U-i_V} H_n(U\cup V)\xrightarrow{\ \delta\ }H_{n-1}(U\cap
+    V) \to \cdots
+   \]
+   \item (Dimension axiom) $H_0(pt)=\ZZ$ and $H_n(pt)=0$ for $n>0$.
+   \item (Additivity axiom) The inclusions $X_\alpha\hookrightarrow \coprod X_\alpha$
+       induce an isomorphism $\bigoplus H_n(X_\alpha) \xrightarrow{\sim}
+       H_n\bigl(\coprod X_\alpha\bigr)$.
+   \item (Weak homotopy axiom) A weak equivalence induces an isomorphism on homology.
+ \end{enumerate}
+
+ For any homology $H_n$, we can define \emph{reduced homology} $\H_n(X) := \ker \bigl(
+ H_n(X)\to H_n(pt)\bigr)$. It will satisfy the following axioms:
+ {\footnotesize
+ \begin{enumerate}
+   \item (Homotopy axiom) $\H_n:\textbf{Top}\to \textbf{Ab}$ factor through
+   \textbf{hTop}.
+   \item (Mayer-Vietoris axiom) If $U, V\subseteq X$ are open sets, then there is a
+   natural long exact sequence
+   \[
+    \cdots \to \H_n(U\cap V)\xrightarrow{(j_U,j_V)} \H_n(U)\oplus
+    \H_n(V)\xrightarrow{i_U-i_V} \H_n(U\cup V)\xrightarrow{\ \delta\ }\H_{n-1}(U\cap
+    V) \to \cdots
+   \]
+   \item (Dimension axiom) $\H_n(pt)=0$ for all $n$.
+   \item (Additivity axiom) The inclusions $X_\alpha\hookrightarrow \bigvee X_\alpha$
+       induce an isomorphism $\bigoplus \H_n(X_\alpha)\xrightarrow{\sim}\H_n\bigl(\bigvee
+       X_\alpha\bigr)$.
+   \item (Weak homotopy axiom) A weak equivalence induces an isomorphism on reduced homology.
+ \end{enumerate}}
+
+ \begin{lemma}
+   $\H_n(S^n)=\ZZ$ and $\H_k(S^n)=0$ for $k\neq n$.
+ \end{lemma}
+ \begin{proof}
+   Induct on $n$. It is true for $n=0$ by the dimension and additivity axioms (for
+   $H_n$). For $n\ge 1$, write $S^n=U\cap V$, with $U\simeq V\simeq \ast$ and $U\cap
+   V\simeq S^{n-1}$. By the Mayer-Vietoris property, we get
+   \[
+    \cdots \to \overbrace{\H_k(U)\oplus \H_k(V)}^0 \to \H_k(S^n)\xrightarrow{\sim}
+    \H_{k-1}(\overbrace{U\cap V}^{\simeq S^{n-1}}) \to \overbrace{\H_{k-1}(U)\oplus \H_{k-1}(V)}^0 \to \cdots
+   \]
+   which proves the result.
+ \end{proof}
+ \begin{proposition}
+   Singular homology satisfies the weak homotopy axiom.
+ \end{proposition}
+ \begin{proof}
+   If $X\to Y$ is a weak equivalence, it induces isomorphisms on all homotopy groups, so
+   by the relative Hurewicz theorem, it induces isomorphisms on all homology groups.
+ \end{proof}
+ \begin{proposition}
+   Singular homology satisfies the additivity axiom.
+ \end{proposition}
+ \begin{proof}
+   This follows from the fact that the functors $\Delta_\bullet$, $C_*$, and $n$-the
+   homology of a chain all preserve coproducts.
+   \def\copd{{\textstyle\coprod}}
+   \begin{gather*}
+     \Delta_n(\copd X_\alpha) = \{\sigma:\Delta^n\to \copd
+     X_\alpha\}=\copd\{\sigma:\Delta^n\to X_\alpha\} = \copd \Delta_n(X_\alpha)\\
+     C_n(\copd S_{\bullet,\alpha}) = \ZZ\cdot \copd S_{n,\alpha} = \bigoplus \ZZ\cdot
+     S_{n,\alpha} = \bigoplus C_n(S_{\bullet,\alpha})\\
+     H_n\bigl( \bigoplus C_{*,\alpha}\bigr)  = \bigoplus H_n(C_{*,\alpha})
+   \end{gather*}
+ \end{proof}
+ We've already verified the dimension axiom in Example \ref{dimensionAxiom}.
+
+ \begin{lemma} \label{L:SEStoLES}
+   Given a short exact sequence of chain complexes $0\to A_*\xrightarrow{f}
+   B_*\xrightarrow{g} C_*\to 0$, there is a long exact sequence of homology groups
+   \[
+   \cdots \to H_n(A_*)\xrightarrow{f_*} H_n(B_*)\xrightarrow{g_*} H_n(C_*)\xrightarrow{\delta}
+   H_{n-1}(A_*)\to \cdots
+   \]
+ \end{lemma}
+ \begin{proof}
+   A diagram chase.
+ \end{proof}
+ \begin{proposition}[Mayer-Vietoris for $\Delta$-sets]
+   If $S_\bullet$ is a $\Delta$-set with sub-$\Delta$-sets $U_\bullet$ and $V_\bullet$,
+   then
+   \[
+    0\to C_*(U_\bullet\cap V_\bullet)\xrightarrow{(j_U,j_V)} C_*(U_\bullet)\oplus
+    C_*(V_\bullet) \xrightarrow{i_U-i_V} C_*(U_\bullet\cup V_\bullet)\to 0
+   \]
+   is a short exact sequence. In particular, since homology preserves direct sums, you
+   get a long exact sequence in homology by the lemma.
+ \end{proposition}
+ \begin{proposition}
+   Singular homology satisfies the Mayer-Vietoris axiom.
+ \end{proposition}
+ \begin{proof}
+   It is clear that we get the exact sequence
+   \[
+    0\to S_*(U\cap V)\to S_*(U)\oplus S_*(V)\to S_*(U\cup V)
+   \]
+   The result follows from the following claim.
+   \begin{claim}
+     The inclusion $S_*(U)+ S_*(V)\hookrightarrow S_*(U\cup V)$ is a homotopy equivalence.
+   \end{claim}
+    To see the claim, consider the chain map $b:S_*(U\cup V)\to S_*(U\cup V)$ given by
+    barycentric subdivision. We get that $b\simeq \id$ \anton{is there an easy way to see
+    it?}, and for any simplex $\sigma$, $b^N(\sigma)\in S_*(U)+ S_*(V)$ for large enough
+    $N$. \anton{this somehow works out}
+ \end{proof}
+
+ The hardest axiom to verify is the homotopy axiom. We will do it after we develop
+ cellular homology.
+
+ In the process, we will show that the Eilenberg-Steenrod axioms
+ completely determine homology. We will define cellular homology in terms of a homology
+ homology and then show that the cellular homology is isomorphic to the original
+ homology. Then we will show that cellular homology is independent of the homology theory
+ you started with.
+
+ \section{Cellular Homology and Uniqueness of Homology}
+ \begin{definition}
+   If $A\subseteq X$, the \emph{relative singular homology} $H_n(X,A)$ is the $n$-th
+   homology of the chain complex $S_*(X)/S_*(A)$.
+ \end{definition}
+ \begin{lemma}
+   If $A\subseteq X$ is a cofibration, then $H_n(X,A)\cong \H_n(X/A)$.
+ \end{lemma}
+ \begin{proof}
+   Note that $S_*(X)/S_*(A) \cong \widetilde S_*(X)/\widetilde S_*(A)$. By Lemma
+   \ref{L:SEStoLES}, we get the long exact sequence shown as the top row in the diagram.
+   \[\xymatrix{
+     \H_n(A)\ar[r] \ar[d]^\id & \H_n(X)\ar[r]\ar[d]^\id & H_n(X,A) \ar[r]\ar[d]^\phi & \H_{n-1}(A) \ar[d]^\id\ar[r]& \H_{n-1}(X)\ar[d]^\id \\
+     \H_n(A)\ar[r] & \H_n(X)\ar[r] & \H_n(X/A) \ar[r] & \H_{n-1}(A) \ar[r]& \H_{n-1}(X)
+   }\]
+   To get the bottom exact sequence, observe that $X/A \simeq X\cup_A CA$, so we may
+   choose open sets $U,V\subseteq X\cup_A CA$ so that $U\simeq X$ and $V\simeq \ast$.
+   Then the bottom row is just the Mayer-Vietoris sequence in reduced homology.
+
+   The map $\phi$ is induced by the obvious map $\widetilde S_*(X)/\widetilde S_*(A) \to
+   \widetilde S_*(X/A)$ and makes the above diagram commute. By the 5-lemma, we get the
+   desired result.
+ \end{proof}
+ \begin{definition}
+   For a CW complex $X$, we define the group of cellular $n$-chains to be
+   $C_n(X)=H_n(X^{(n)},X^{(n-1)})$. The boundary map is defined as the composition
+   $d^{CW}:H_n(X^{(n)},X^{(n-1)})\to H_{n-1}(X^{(n-1)})\to \H_n(X^{(n-1)},X^{(n-2)})$. The
+   \emph{cellular homology} $H_n^{CW}(X)$ is the $n$-th homology of this chain complex.
+ \end{definition}
+ Note that the lemma shows that $C_n(X) = H_n(X^{(n)}/X^{(n-1)}) = \H_n(\bigvee_{I_n}
+ S^n) \cong \ZZ \cdot I_n$, where $I_n$ indexes the $n$-cells of $X$.
+
+ To prove that cellular homology agrees with singular homology, we'll need a few lemmas.
+
+ \begin{lemma}\label{L:lemm1}
+   $H_k(X^{(n)})=0$ for $k>n$.
+ \end{lemma}
+ \begin{proof}
+   Induct on $n$. For $n=0$, it is true by additivity because $X^{(0)}$ is a collection
+   of points. In general, we get an exact sequence
+   \[
+    \underbrace{H_k(X^{(n-1)})}_{0\text{ by induction}} \to H_k(X^{(n)}) \to
+    \underbrace{H_k(X^{(n)},X^{(n-1)})}_{\cong \H_k(X^{(n)}/X^{(n-1)}) = \H_n(\bigvee
+    S^n)=0 \hspace*{-5em}}
+   \]
+   so the middle term is zero.
+ \end{proof}
+ \begin{lemma}\label{L:lemm2}
+   The inclusion $i:X^{(k)}\to X$ induces isomorphisms $H_n(X^{(k)})\to H_n(X)$ for $n<
+   k$.
+ \end{lemma}
+ \begin{proof}
+   We have the sequence
+   \[
+    \underbrace{H_{n+1}(X^{(n+\ell+1)},X^{(n+\ell)})}_0 \to H_n(X^{(n+\ell)}) \xrightarrow{i}
+    H_n(X^{(n+\ell+1)}) \to \underbrace{H_n(X^{(n+\ell+1)},X^{(n+\ell)})}_0 .
+   \]
+   It follows that for $\ell>0$, inclusion induces isomorphisms $H_n(X^{(n+\ell)})\cong
+   H_n(X^{(n+\ell+1)})$.
+
+   To show that the inclusion $X^{(k)}\to X$ induces isomorphisms, we can take two
+   approaches:
+   \begin{enumerate}
+     \item[(Bad)] We know that singular homology is represented by maps
+     $\sigma:\Delta^n\to X$. Since $\Delta^n$ is compact, the image of $\sigma$ lies in a
+     finite skeleton. This shows that $H_n(X^{(k)})\to H_n(X)$ is surjective (given the
+     isomorphisms already constructed). Similarly, if some $\sigma$ is a boundary of
+     $\tilde\sigma$ in $X$, then the image of $\tilde\sigma$ is in some finite skeleton,
+     showing that the map is injective. This approach is bad because it explicitly uses
+     the definition of singular homology.
+
+     \item[(Good)] From the Eilenberg-Steenrod axioms, one can prove that homology
+     respects filtered colimits. This is the good version because it proves the lemma for
+     arbitrary homology theories.\qedhere
+   \end{enumerate}
+ \end{proof}
+ \begin{theorem}
+   Cellular homology is naturally isomorphic to singular homology.
+ \end{theorem}
+ \begin{proof} In the following diagram, all the horizontal and vertical sequences are
+ exact. By the way, this makes it clear that $(d^{CW})^2=0$.
+   \[\small \xymatrix @C-1pc{
+    & &
+   **[l] 0\overset{\ref{L:lemm1}}= H_n(X^{(n-1)}) \ar[d] & \fbox{$H_n(X)$}\ar@{}[d]|{\parallel}^{\wr\: \ref{L:lemm2}} & \H_n(\bigvee S^{n+1})=0 \ar@{}[d]|{\parallel}^{\wr} \\
+   H_{n+1}(X^{(n+1)}) \ar[r] & H_{n+1}(X^{(n+1)},X^{(n)}) \ar[rd]_<>(.5){d^{CW}} \ar[r]^<>(.5)\delta &
+   H_n(X^{(n)}) \ar[d]^{j_n} \ar[r] & H_n(X^{(n+1)}) \ar[r] & H_n(X^{(n+1)},X^{(n)})\\
+    & C_{n+1}(X) \ar@{}[u]|{\parallel} & H_n(X^{(n)},X^{(n-1)}) \ar[d]_\delta \ar@{}[r]|<>(.5){=} \ar[rd]^{d^{CW}} & C_n(X) \\
+    & 0\overset{\ref{L:lemm1}}{=} H_{n-1}(X^{(n-2)})\ar[r] & H_{n-1}(X^{(n-1)})
+   \ar[r]_<>(.5){j_{n-1}} & \rlap{$H_{n-1}(X^{(n-1)},X^{(n-2)})$}\qquad
+   }\]
+   Now we compute the $H_n(X)$ which is boxed.
+   \begin{align*}
+     H_n(X) &\cong H_n(X^{(n)})/\im \delta & \bigl(H_n(X^{(n+1)},X^{(n)})=0\bigr)\\
+     &= \im j_n /\im d^{CW} & (j_n\text{ injective})\\
+     &= \ker \delta/ \im d^{CW} & (\text{vertical sequence exact})\\
+     &= \ker d^{CW}/\im d^{CW} & (j_{n-1}\text{ injective})
+   \end{align*}
+ \end{proof}
+
+ \begin{example}
+   Now it is easy to compute the homology of $S^n$ for $n\ge 2$ because the cellular
+   chain complex has zeros everywhere except in dimensions $n$ and $0$. Thus,
+   $H_n(S^n)\cong \ZZ \cong H_0(S^n)$ and $H_k(S^n)=0$ for $k\neq 0,n$.
+ \end{example}
+ In general, we can compute cellular homology using the following result.
+ \begin{proposition}
+   If $X$ is a CW complex, let $\phi_i$ be the attaching map of the $i$-th $n$-cell, and
+   let $p_j$ be the projection $X^{(n)}\to X^{(n)}/\bigl( X^{(n)}\smallsetminus e^n_j
+   \bigr)$. Then the boundary map $d^{CW}:C_n(X)=\ZZ\cdot I_n\to \ZZ\cdot I_{n-1} =
+   C_{n-1}(X)$ is a matrix with $(i,j)$-th entry $\deg(p_j\circ \phi_i)$.
+ \end{proposition}
+ \begin{proof}
+   Note that we have the diagram
+   \[\xymatrix{
+    & H_n(X^{(n)},X^{(n-1)})\ar[r]^\delta \ar@{}[d]|{\parallel}_{\sum (\Phi_i)_* \:\wr}
+    & \H_{n-1}(X^{(n-1)})\\
+    \H_n(D^n)=0\ar[r]
+    & \bigoplus_{I_n} H_n(D^n,S^{n-1}) \ar[r]^<>(.5)\sim_<>(.5)\delta
+    & \bigoplus_{I_n} \H_{n-1}(S^{n-1}) \ar[r] \ar[u]_{\sum (\phi_i)_*} & 0=\H_{n-1}(D^n)
+   }\]
+   which fits (one and a half times) into the diagram
+   \[\xymatrix{
+   H_n(X^{(n)},X^{(n-1)}) \ar@{}[d]|{\parallel}_{\sum (\Phi_i)_*\:\wr}\ar[r]
+   & \H_{n-1}(X^{(n-1)}) \ar@/_2ex/[ddr]_(.6){\sum (p_j)_*} \ar[r]
+   & H_{n-1}(X^{(n-1)},X^{(n-2)}) \ar@{}[d]|{\parallel}^{\wr\: \sum (\Phi_i)_*}\\
+   \ZZ\cdot I_n \ar@/_3ex/[drr]_{d^{CW}} \ar[r]_<>(.5)\delta^<>(.5)\sim & \bigoplus \H_n(S^n) \ar[u]^{\sum (\phi_i)_*}
+   & \bigoplus H_{n-1}(D^{n-1},S^{n-2}) \ar[r]^<>(.5)\sim_<>(.5)\delta \ar@{}[d]|{\parallel} &
+   \bigoplus \H_{n-1}(S^{n-1})\\
+   & & \ZZ\cdot I_{n-1}
+   }\]
+   from which we see that $d^{CW} = \bigl(\sum (\phi_i)_* \bigr)\circ \bigl( \sum (p_j)_*
+   \bigr)$. This proves the result.
+ \end{proof}
+ \begin{corollary}
+   Any homology theory on CW complexes which is homotopy invariant, additive, and
+   satisfies the dimension and Mayer-Vietoris axioms is isomorphic to singular homology.
+ \end{corollary}
+ \begin{proof}
+   The results in this section show that any homology theory with these properties is
+   isomorphic to \emph{its own version of CW homology}. That is, the matrix coefficients
+   are the degrees of $\phi_i\circ p_j$, computed in the given homology theory. We will
+   show that degree can be defined independent of homology theory.
+
+   We have a Hurewicz map $\pi_n(S^n)\to h_n(S^n)\cong \ZZ$, which is a group
+   homomorphism (using the distributivity trick that was on one of the homeworks) and
+   onto because the identity map on $S^n$ gets sent to a generator of $\ZZ$. Assuming the
+   Hurewicz theorem, we get that $\pi_n(S^n)\cong \ZZ$. Notice that a map $f:S^n\to S^n$
+   induces a map $f_*:\pi_n(S^n)\to \pi_n(S^n)$, so we can define degree via $\pi_n$.
+   Thus, degree is independent of the homology theory $h$.
+ \end{proof}
+
+ \underline{An issue you have to deal with}: If $X$ and $Y$ are CW complexes and $f:X\to
+ Y$ is a map, then you don't get any natural map $H^{CW}_n(X)\to H^{CW}_n(Y)$. To get
+ functoriality of $H^{CW}$, you need to prove the cellular approximation theorem (Theorem
+ 4.8 of Hatcher).
+ \begin{theorem}
+   Every map $f:X\to Y$ is homotopic to a cellular map, a map that sends $X^{(n)}$ to
+   $Y^{(n)}$ for each $n$.
+ \end{theorem}
+
+ \subsection*{Morse (Floer) homology on finite-dimensional smooth manifolds}
+ Choose a sufficiently nice function $f$ on a smooth manifold $M$. At a critical point of
+ $f$, define the index of $f$ to be the number of negative eigenvalues of the Hessian
+ (that is, the number of downward curving directions). Define $C_n^\text{Morse} =
+ \ZZ\cdot I_n$, where $I_n$ is the set of index $n$ critical points of $f$. The boundary
+ map counts the number of flow lines from one point to another. Now one can check that
+ $d^2=0$, so we get a homology theory.
+
+ One can check that the result is independent of the choice of $f$. In fact, $f$ dictates
+ a CW structure on $M$, with one $n$-cell for each index $n$ critical point.
+
+ In Floer homology, where $M$ is allowed to be infinite-dimensional, the function $f$ is
+ somehow given to you by the geometry of the situation. You no longer get independence of
+ $f$.
+
+ \section{Homotopy invariance}
+ If $f_0,f_1:X\to Y$ are homotopic maps, then we have the picture $X\xrightarrow{i_0,
+ i_1} X\times I \xrightarrow{F} Y$, with $f_j=F\circ i_j$ for $j=0,1$. We would like to
+ show that $f_0$ and $f_1$ induce the same map in homology. To prove that, we will
+ actually show that they induce homotopic chain maps, and we will use $F$ to construct
+ the homotopy. However, to do this, we must understand what the chain complex associated
+ to a product looks like. This is the content of the Eilenberg-Zilber Theorem
+ \ref{T:Eilenberg-Zilber}.
+
+ \begin{definition}
+   If $C_*$ and $D_*$ are two chain complexes, then their tensor product is defined by
+   $(C_*\otimes D_*)_n = \bigoplus_{p+q=n} C_p\otimes_\ZZ D_q$, with boundary map $d^{C\otimes
+   D}_n = \bigoplus_{p+q=n} d^C_p\otimes 1 + (-1)^p\otimes d^D_q$. The sign ensures that
+   the result is a chain complex; it is a standard exercise to check this.
+   \[\xymatrix{
+   C_p\otimes D_q \ar[r]^{d^C\oplus 1} \ar[d]_{(-1)^p\otimes d^D} & C_{p+1}\otimes D_q \ar[d]^{(-1)^{p+1}\otimes d^D}\\
+   C_p\otimes D_{q+1} \ar[r]_{d^C\otimes 1} \ar@{}[ru]|{\txt{\footnotesize anti-\\ \footnotesize commutes}} & C_{p+1}\otimes D_{q+1}
+   }\]
+%   \[\xymatrix @!0 @+1pc{
+%     & C_{odd}\ar[r] & C_{even}\ar[r] & C_{odd}\ar[r] & C_{even} \ar[r] & \cdots \\
+%   D_{even}\ar[d] & \bullet \ar[d] \ar[r]^{} & \bullet \ar[d] \ar[r] & \bullet \ar[d] \ar[r] & \bullet \ar[d]
+%   \ar[r] & \cdots\\
+%   D_{odd}\ar[d] & \bullet \ar[d] \ar[r] & \bullet \ar[d] \ar[r] & \bullet \ar[d] \ar[r] & \bullet \ar[d]
+%   \ar[r]\ar[d] & \cdots\\
+%   D_{even}\ar[d] & \bullet \ar[d] \ar[r] & \bullet \ar[d] \ar[r] & \bullet \ar[d] \ar[r] & \bullet \ar[d]
+%   \ar[r] & \cdots\\
+%    \vdots & \vdots & \vdots & \vdots & \vdots
+%   }\]
+ \end{definition}
+ \begin{lemma}
+   If $X$ and $X'$ are CW complexes, then $C_*(X\times X')=C(X)\otimes C(X')$
+ \end{lemma}
+ \begin{proof}
+   This follows from the fact that $\partial (D^p\times D^q)=\partial D^p\times D^q \cup
+   D^p\times \partial D^q$.
+ \end{proof}
+ \begin{definition}
+   If $S_\bullet$ is a $\Delta$-set, the \emph{cone on $S_\bullet$} is the $\Delta$-set
+   defined by $(CS)_0 = S_0\cup \infty$, $(CS)_n = S_n\cup S_{n-1}$ for $n>0$. The
+   boundary maps are defined by $d_i:
+   \raisebox{.5\baselineskip}{$\xymatrix @R=0pc{S_n \ar[r]^{d_i} & S_{n-1}\\
+   S_{n-1} \ar[r]_{d_i} & S_{n-2}}$}$ for $i\le n$ and
+   $d_{n+1}:\raisebox{.5\baselineskip}{$\xymatrix @R=0pc{S_n \ar[r]^{d_{n+1}} & S_{n-1}\\
+   S_{n-1} \ar[ru]_{\id} & S_{n-2}}$}$, where $S_{-1}=\{\infty\}$.
+ \end{definition}
+ \anton{picture here}
+ \begin{lemma}
+   Cones are acyclic: $H_*\bigl(C_*(CS)\bigr)=0$.
+ \end{lemma}
+ \begin{proof} If $(a,b)\in \ZZ CS_n = \ZZ S_n\oplus \ZZ S_{n-1}$ maps to zero, then it
+ is the image of $\bigl(0,(-1)^{n+1}a\bigr)$.
+   \[\raisebox{3.5pc}{$\xymatrix{
+     \ZZ S_{n+1}\ar[r]^d \ar@{}[d]|{\txt{$\oplus$}} & \ZZ S_n \ar@{}[d]|{\txt{$\oplus$}}\ar[r]^d & \ZZ S_{n-1}\ar@{}[d]|{\txt{$\oplus$}}\\
+     \ZZ S_n\ar[ur]|{(-1)^{n+1}}\ar[r]^d & \ZZ S_{n-1}\ar[ur]|{(-1)^n} \ar[r]^d & \ZZ S_{n-1}
+   }\qquad
+   \xymatrix {
+     0 \ar@{}[d]|{\txt{$\oplus$}} & a\ar@{}[d]|{\txt{$\oplus$}} \ar@{|->}[r] & da-(-1)^nb=0 \ar@{}[d]|{\txt{$\oplus$}}\\
+     (-1)^{n+1}a \ar@{|->}[r]\ar@{|->}[ru] & b\ar@{|->}[r]\ar@{|->}[ru] & db=0
+   }$}\qedhere\]
+ \end{proof}
+ \begin{corollary}[$\Delta^p\times \Delta^q$ is ``acyclic'']
+   $\H_*(\Delta^p\times \Delta^q)=0$.
+ \end{corollary}
+ \begin{proof}
+   Singular homology agrees with simplicial homology by Theorem
+   \ref{T:DeltaGeomAdjunction}, so we use simplicial homology. We can break the product
+   of in to simplices. Then by repeated application of Mayer-Vietoris for
+   $\Delta$-sets, it is enough to show that $\H_*(\Delta^k)=0$, which is true by the lemma.
+ \end{proof}
+
+ \begin{theorem}[Eilenberg-Zilber] \label{T:Eilenberg-Zilber}
+   For topological spaces $X$ and $Y$, there is a \emph{natural} chain homotopy
+   equivalence $ h_{XY}:S_*X\otimes S_* Y\xrightarrow{\simeq} S_*(X\times Y)$ such that
+   $(h_{XY})_0:S_0(X)\otimes S_0(Y)\to S_0(X\times Y)$ is the map $\sigma\otimes
+   \sigma'\mapsto \sigma\times \sigma'$.\footnote{Note that this makes sense only because
+   $\Delta^0\times \Delta^0\approx \Delta^0$.} Moreover, $h_{XY}$ is unique up to chain
+   homotopy.
+ \end{theorem}
+ This may be rephrased as ``$S_*:(\textbf{Top},\times)\to (\textbf{Chain},\otimes)$ is a
+ monoidal functor.'' We saw already that ``$S_*:(\textbf{Top},\sqcup)\to
+ (\textbf{Chain},\oplus)$ is a monoidal functor.''
+ \begin{proof}[Proof (via ``acyclic models'')]
+   Induct on degree. The start of the induction is part of the hypothesis. Assume we have
+   $h_{XY}$ defined in degree $<p+q$ for all spaces $X$ and $Y$. We would like to define
+   $h_{XY}:S_p X\otimes S_q Y\to S_{p+q}(X\times Y)$. Let $a\in S_p X$ and $b\in S_q Y$,
+   so $a:\Delta^p\to X$ and $b:\Delta^q\to Y$. If naturality is to hold, the following
+   diagram must commute.
+   \[\xymatrix @C+3pc{
+   S_p X\otimes S_q Y \ar@{.>}[r]|{h_{XY}?} & S_{p+q}(X\times Y)\\
+    S_p\Delta^p \otimes S_q\Delta^q \ar@{.>}[r]|{h_{\Delta^p\Delta^q}?}
+   \ar[u]^{S_*a\otimes S_*b} \ar[d]_{d} & S_{p+q}(\Delta^p\times \Delta^q) \ar[u]_{S_*(a\times b)} \ar[d]^d\\
+   (S_{p-1}\Delta^p\otimes S_q\Delta^q )\oplus (S_p\Delta^p\otimes S_{q-1}\Delta^q)
+   \ar[r]^<>(.5){h_{\Delta^p\Delta^q}}_<>(.5){\text{induction!}} & S_{p+q-1}(\Delta^p\times \Delta^q)
+   }\]
+   \[\xymatrix @C+2pc{
+    a\otimes b \ar@{|.>}[r] & h_{XY}(a\otimes b) \\
+    \id_{\Delta^p}\otimes \id_{\Delta^q} \ar@{|->}[u]^{S_*a\otimes S_*b} \ar@{|->}[d]_d \ar@{|.>}[r]
+    & y? \ar@{|->}[u]_{S_*(a\times b)} \ar@{|->}[d]^d \\
+    \Bigl(\bigl(\sum_{i=0}^p (-1)^i \delta_i\bigr)\otimes \id, \id\otimes \bigl(\sum_{j=0}^q(-1)^j\delta_j\bigr)
+    \Bigr) \ar@{|->}[r]^<>(.5){h_{\Delta^p\Delta^q}} & x
+   }
+   \]
+   Now we see that a wonderful thing has happened. So long as we can find a $y\in
+   S_{p+q}(\Delta^p\times \Delta^q)$ so that $dy=x$, we can define $h_{XY}(a\otimes b)$
+   to be $S_*(a\times b)(y)$, and this will automatically be natural! We know that $dx=0$
+   because $dx = d\circ (h_{\Delta^p\Delta^q})_{p+q-1}\circ d (\id\otimes \id) =
+   (h_{\Delta^p\Delta^q})_{p+q-2}\circ d\circ d(\id\otimes \id) =0$ (note that we only
+   used the degrees for which $h$ is already defined).
+   Since $\Delta^p\times \Delta^q$ is acyclic $H_{p+q-1}(\Delta^p\times \Delta^q)=0$, so
+   such a $y$ exists.
+
+   It remains to show that the $h_{XY}$ only depends on the choice of $y$ up to homotopy.
+   If we use $y'$ instead of $y$, we have $d(y-y')=0$. Since $H_{p+q}(\Delta^p\times
+   \Delta^q)=0$, there is some $z\in S_{p+q+1}(\Delta^p\times\Delta^q)$ so that
+   $dz=y-y'$. This $z$ induces a homotopy between the two choices of $h_{XY}$.
+ \end{proof}
+ Now we are ready to prove the desired result.
+ \begin{theorem}[Homotopy invariance of Homology]
+   If $f_0$ and $f_1$ are homotopic maps from $X$ to $Y$, then they induce chain
+   homotopic maps $S_* X\to S_* Y$. In particular, they induce the same map on homology.
+ \end{theorem}
+ \begin{proof}
+   Let $F:X\times I\to Y$ be a homotopy from $f_0$ to $f_1$. We have a canonical
+   inclusion $C_*I\to S_*I$. Thus, we get the chain map
+   \[\xymatrix @R-1pc{
+    S_* X\otimes C_* I \ar[r] & S_* X\otimes S_* I\ar[r]^{\simeq}_{h_{XI}} & S_*(X\times
+    I )\ar[r]^{S_*F} & S_*(Y)\\
+    (S_{n+1}X\otimes C_0 I)\oplus (S_n X\otimes C_1) I \ar[rrr] & & & S_{n+1}Y
+    }\]
+%   \[\xymatrix{
+%    (a_0\otimes v_0 + a_1\otimes v_1, b\otimes e)\ar@{|->}[r] \ar@{|->}[d]^{d^{S_*X\otimes C_*I}} &
+%    S_*f_0(a_0)+S_*f_1(a_1)+h_{n+1}(b) \ar@{|->}[d]^<>(.5){d^Y}\\
+%    (d^Xa_0\otimes v_0 + d^X a_1\otimes v_1 + (-1)^n b\otimes
+%    (v_0-v_1), d^Xb\otimes e) \ar@{|->}[r]
+%    & \raisebox{2.8pc}{\shortstack{$d^Y S_*f_0(a_0)+d^Y
+%    S_*f_1(a_1) + d^Yh_{n+1}(b)$\\ $\parallel$ \\ $S_*f_0(d^X a_0) + S_*f_1(d^Xa_1) +
+%    (-1)^n(S_*f_0-S_*f_1)(b) + h_n(d^Xb)$}}
+%   }\]
+   {\footnotesize \[\hspace*{-2pc}\xymatrix @!0 @R=3pc @C=20pc{
+    (a_0\otimes v_0 + a_1\otimes v_1, b\otimes e)\ar@{|->}[r] \ar@{|->}[d]^{d^{S_*X\otimes C_*I}} &
+    S_*f_0(a_0)+S_*f_1(a_1)+h_{n+1}(b) \ar@{|->}[d]^<>(.5){d^Y}\\
+    (d^Xa_0\otimes v_0 + d^X a_1\otimes v_1 + (-1)^n b\otimes
+    (v_0-v_1), d^Xb\otimes e) \ar@{|->}[rd] & d^Y S_*f_0(a_0)+d^Y S_*f_1(a_1) + d^Yh_{n+1}(b) \ar@{}[d]|{\parallel}\\
+    & S_*f_0(d^X a_0) + S_*f_1(d^Xa_1) + (-1)^n(S_*f_0-S_*f_1)(b) + h_n(d^Xb)
+   }\]}
+   From the fact that it is a chain map, we get the equalities
+   \begin{align*}
+    \mbox{\footnotesize $d^Y S_*f_0(a_0)+d^Y S_*f_1(a_1) + d^Yh_{n+1}(b)$} &=
+    \mbox{\footnotesize $S_*f_0(d^X a_0) + S_*f_1(d^Xa_1) + (-1)^n(S_*f_0-S_*f_1)(b) + h_n(d^Xb)$}\\
+    d^Y h_{n+1} &= (-1)^n(S_*f_0-S_*f_1) + h_nd^X & \llap{($d^Y\circ S_*f_i= S_*f_i\circ d^Y$)}\\
+    d^Y \circ (-1)^n h_{n+1} + (-1)^{n-1} h_n \circ d^X &= S_*f_0-S_*f_1
+   \end{align*}
+   Thus, if we twist $h$ by some minus signs as above, we get a homotopy from $S_*f_0$ to
+   $S_*f_1$, as desired.
+ \end{proof}
+
+ \section{The Generalized Jordan Curve Theorem}
+ The following theorem looks obvious until you think about it.
+ \begin{theorem}[Jordan Curve Theorem]
+   If $S^1\hookrightarrow \RR^2$ is an embedding (continuous injection), the the
+   complement of the image has two path components.
+ \end{theorem}
+ We will prove a more general version.
+ \begin{theorem} \label{T:GJCT}
+   If $i:S^r\hookrightarrow S^n$ with $r<n$, then
+   $\H_k\bigl(S^n\smallsetminus i(S^r)\bigr)=\begin{cases}
+     \ZZ & k=n-r-1\\
+     0 & \text{else}
+   \end{cases}.$
+ \end{theorem}
+ That is, homology is independent of the embedding. This is kind of sad because it tells
+ us that we cannot use homology to understand knots.
+
+ You can guess the answer by considering linear embeddings, where we think of $S^n$ as
+ $\RR^n\cup \infty$. Then we have
+ \begin{align*}
+   S^n\smallsetminus S^r &= \RR^n\smallsetminus \RR^r\\
+    &= (\RR^{n-r} \times \RR^r) \smallsetminus (0\times \RR^r)\\
+    &= (\RR^{n-r}\smallsetminus 0)\times \RR^r \simeq S^{n-r-1}.
+ \end{align*}
+ However, you have to be careful. It is not true that for any embedding $i$,
+ $S^n\smallsetminus i(S^r)\simeq S^{n-r-1}$. For example, we have the Alexander horned
+ sphere in $S^3$, whose complement is not homotopic to $S^0$.
+
+ For the proof of Theorem \ref{T:GJCT}, we'll need the following lemma.
+ \begin{lemma}
+   Let $Y$ be compact and assume it has the property that for every $i:Y\hookrightarrow
+   S^n$, $\H\bigl(S^n\smallsetminus i(Y)\bigr)=0$. Then $Y\times I$ has the same
+   property.
+ \end{lemma}
+ \begin{proof}
+   Let $f:Y\times I\hookrightarrow S^n$ be an embedding. Let $U_0=S^n\smallsetminus
+   f(Y\times [0,1/2])$ and let $U_1=S^n\smallsetminus f(Y\times [1/2,1])$. Then $U_0\cup
+   U_1 = S^n \smallsetminus f(Y\times \{1/2\})$, so it has trivial homology by
+   assumption, and $U_0\cup U_1 = S^n\smallsetminus f(Y\times I)$. By Mayer-Vietoris, we
+   get the isomorphism
+   \[
+    \H_k\bigl(S^n\smallsetminus f(Y\times I)\bigr) \xrightarrow{\ \sim\ } \H_k(U_0)\oplus
+    \H_k(U_1).
+   \]
+   Any non-zero homology class would have to give a non-zero homology class in one of the
+   $U_i$. Then we can induct to get non-zero homology classes in $S^n\smallsetminus
+   f(Y\times [p-\varepsilon,p+\varepsilon])$ for some $p\in I$ and arbitrarily small
+   $\varepsilon$. Since homology commutes with filtered colimits, we get a non-zero
+   homology class in $S^n\smallsetminus f(Y\times\{p\})$, a contradiction.
+ \end{proof}
+ In particular, $D^0=pt$ has the property in the lemma because $S^n\smallsetminus pt\cong
+ \RR^n\simeq pt$. By the lemma, $D^r\cong D^{r-1}\times I$ has the property for all $r$.
+ This seems obvious, but you have to watch out, it is not true that $S^n\smallsetminus
+ i(D^r)\simeq pt$ for all embeddings $i$. For example, we have the Fox-Artin wild arc in
+ $S^3$.
+ \begin{proof}[Proof of Theorem \ref{T:GJCT}]
+   Induct on $r$. For $r=0$, our na\"\i ve calculation works; $S^n\smallsetminus
+   i(S^0)\simeq S^{n-1}$ for all $i$. Now assume the result for $r-1$, and let
+   $i:S^r\hookrightarrow S^n$. Then we can write $S^r = D^r_+\cup_{S^{r-1}} D^r_-$, and
+   we have open sets $U= S^n\smallsetminus i(D^r_+)$ and $V=S^n\smallsetminus i(D^r_-)$
+   in $S^n$, with
+   \begin{align*}
+     S^n\smallsetminus i(S^{r-1}) &= U\cup V\\
+     S^n\smallsetminus i(S^r) &= U\cap V.
+   \end{align*}
+   By the Lemma, $U$ and $V$ have trivial homology. Mayer-Vietoris and the induction step
+   immediately give the desired result.
+ \end{proof}
+ There are some related results.
+ \begin{theorem}[Schoenflie\ss\ Conjecture, proven by Mazur and Brown]
+   If $i:S^{n-1}\times (-\varepsilon,\varepsilon)\hookrightarrow S^n$, then
+   $S^n\smallsetminus i\bigl( S^{n-1}\times (-\varepsilon,\varepsilon)\bigr) \approx
+   D^n\sqcup D^n$. For $n=2$, you don't even need the collar neighborhood.
+ \end{theorem}
+ \begin{theorem}[Annulus Conjecture, proven by Kirby for $n\ge 5$, Quinn for $n=4$, and somebody for $n\le 3$]
+   If $i:\bigl(S^{n-1}\times (-\varepsilon,\varepsilon)\bigr) \sqcup (S^{n-1}\times
+   (-\varepsilon,\varepsilon)\bigr) \hookrightarrow S^n$, then the (appropriate component
+   of) the complement of $\im i$ is homeomorphic to $S^{n-1}\times I$.
+ \end{theorem}
+
+ \section{Lefshetz, Alexander, and Poincar\'e Dualities}
+
+ \begin{definition}
+   Let $H_*$ be a homology theory obtained from a chain complex, $H_n:\textbf{hTop}\to
+   \textbf{Chain}\xrightarrow{n\text{-th homology}} \textbf{Ab}$. Then we define the
+   corresponding \emph{cohomology} theory by dualizing the chain complex in the middle,
+   $H^n:\textbf{hTop}\to \textbf{Chain}\xrightarrow{\hom(-,\ZZ)}
+   \textbf{Chain}\xrightarrow{n\text{-th homology}} \textbf{Ab}$.
+ \end{definition}
+ In homework 13, we showed uniqueness of cohomology.
+
+ \begin{theorem}[Lefschetz Duality]
+   If $M$ is an $n$-dimensional compact orientable manifold, then $H_k(M,\partial M)\cong
+   H^{n-k}(M)$ and $H_k(M)\cong H^{n-k}(M,\partial M)$.
+ \end{theorem}
+
+ \begin{theorem}[Alexander Duality]
+   If $K$ is a finite CW complex and $i:K\hookrightarrow \RR^n$ is an embedding, then
+   $\H_k\bigl(\RR^n\smallsetminus i(K)\bigr)\cong H^{n-k-1}(K)$.
+ \end{theorem}
+ \begin{remark}[Excision axiom]
+   Originally, the axioms of homology were stated for pairs of spaces, and one of the
+   axioms was \emph{excision}: if $\bbar B\subseteq\inn A$, then $H_n(X,A)\cong
+   H_n(X\smallsetminus B,A\smallsetminus B)$. It is easy to check that this holds in our
+   formulation of homology. We define $H_n(X,A)$ as $\H_n(X/A)$ \anton{at least when
+   $A\subseteq X$ is a cofibration ... what if it isn't?}
+ \end{remark}
+ \begin{proof}
+   There is a regular $\varepsilon$-neighborhood $N(K)$ of $i(K)$. That is, there is a
+   compact $n$-manifold $N(K)$ which retracts to $i(K)$. $N(K)$ is oriented because it is
+   an $n$-submanifold in the oriented $n$-manifold $\RR^n$. Let $N'(K)$ be an
+   $\varepsilon/2$-neighborhood of $i(K)$. Now we can compute
+   \begin{align*}
+     H^{n-k-1}(K) &\cong H^{n-k-1}\bigl(N(K)\bigr)\\
+        &\cong H_{k+1}\bigl(N(K),\partial N(K)\bigr) & \text{(Lefschetz)}\\
+        &\cong H_{k+1}\bigl(\RR^n,\RR^n\smallsetminus \inn N'(K)\bigr) &\text{(excision)}\\
+        &\cong H_{k+1}\bigl(\RR^n,\RR^n\smallsetminus i(K)\bigr)\\
+        &\cong \H_k\bigl(\RR^n\smallsetminus i(K)\bigr)
+   \end{align*}
+   where the last isomorphism follows from the long exact reduced pair sequence and the
+   fact that $\H_*(\RR^n)=0$.
+ \end{proof}
+ Note that we can now compute $H_k\bigl(S^n\smallsetminus i(K)\bigr)$. In particular,
+ the Generalized Jordan Curve Theorem is a corollary of Alexander Duality. Use
+ Mayer-Vietoris, with $U$ an neighborhood of infinity that doesn't intersect $i(K)$, and
+ $V$ a big ball containing the (missing) image of $K$. Then we have that $U\simeq \ast$,
+ $V\simeq \RR^n\smallsetminus i(K)$, and $U\cap V\simeq S^{n-1}$.
+ \[
+    H_k(S^{n-1})\to H_k\bigl(\RR^n\smallsetminus i(K)\bigr) \to
+    H_k\bigl(S^n\smallsetminus i(K)\bigr) \to H_{k-1}(S^{n-1})
+ \]
+ If $k\neq n,n-1$, then we get $H_k\bigl(\RR^n\smallsetminus i(K)\bigr) \cong
+ H_k\bigl(S^n\smallsetminus i(K)\bigr)$. For the remaining cases, we use naturality of
+ Mayer-Vietoris. We have inclusions $\RR^n\smallsetminus i(K)\hookrightarrow
+ \RR^n\smallsetminus pt$ and $S^n\smallsetminus i(K)\hookrightarrow S^n\smallsetminus pt$.
+ The corresponding map on $S^{n-1}$ is the identity. Thus, we get
+ {\small
+ \[\hspace*{-3em}
+ \xymatrix @C-.8pc{
+    0\ar[r] & \H_n\bigl(\RR^n\smallsetminus i(K)\bigr) \ar[r] \ar[d]
+    & \H_n\bigl(S^n\smallsetminus i(K)\bigr) \ar[r]^<>(.5)b \ar[d]
+    & \H_{n-1}(S^{n-1}) \ar[r]^<>(.5)a \ar[d]^{\wr}
+    & \H_{n-1}\bigl(\RR^n\smallsetminus i(K)\bigr) \ar[r] \ar[d]^{j}
+    & \H_{n-1}\bigl(S^n\smallsetminus i(K)\bigr) \ar[r] \ar[d]
+    & 0\\
+    0\ar[r] & \H_n(\RR^n\smallsetminus pt) \ar[r]
+    & \H_n(S^n\smallsetminus pt) \ar[r]
+    & \H_{n-1}(S^{n-1}) \ar[r]^<>(.5){\sim}
+    & \H_{n-1}(\RR^n\smallsetminus pt) \ar[r]
+    & \H_{n-1}(S^n\smallsetminus pt) \ar[r]
+    & 0\\
+ }\]} We can deduce that $a$ must be an injection (since $j\circ a$ is an isomorphism),
+ so $b$ must be the zero map. In fact, one can show that $a$ splits. Thus,
+ \[
+   \H_k\bigl(\RR^n\smallsetminus i(K)\bigr) \cong \begin{cases}
+   \H_k\bigl(S^n\smallsetminus i(K)\bigr) & k\neq n-1\\
+   \H_k\bigl(S^n\smallsetminus i(K)\bigr)\oplus \ZZ & k= n-1
+ \end{cases}\]
+ and the extra factor of $\ZZ$ is represented by a big sphere near infinity.
+
+ Another corollary of Lefshetz duality is Poincar\'e duality. The proof is immediate.
+ \begin{theorem}[Poincar\'e Duality]
+   If $M$ is a closed orientable $n$-manifold, then $H_k(M)\cong H^{n-k}(M)$.
+ \end{theorem}
+ Note that Poincar\'e duality implies that $H^r(M)=0=H_r(M)$ for $r$ larger than the
+ dimension of $M$.
+
+ The idea of Poincar\'e duality is this. Assume $M=|S_\bullet|$ for some $S_\bullet$ (in
+ fact, not every manifold is triangulatable, so this is a non-trivial assumption). Then
+ $H_*(M)=H_*(S_\bullet)$. We get a cellular chain $C_*(S_\bullet)$, and we can construct
+ $M$ as the dual CW complex, in which every $k$-cell is replaced by an
+ $(n-k)$-cell.\footnote{In the case where $M$ is a surface, so the CW structure is a
+ graph on $M$, the dual decomposition is the usual dual graph.} It is easy to see that
+ $C_{k}\cong \hom(C_{n-k}^\text{dual},\ZZ)$. Thus, taking homologies, we get $H_k(M)\cong
+ H^{n-k}(M)$.
+
+ \section{Coefficients and the K\"unneth Theorem}
+
+ \begin{definition}
+   Homology (resp.~cohomology) with coefficients in some abelian group $A$ is defined by
+   the Eilenberg-Steenrod axioms, with the dimension axiom replaced by
+   $H_n(pt;A)=\delta_{n0} A$ (resp.~$H^n(pt;A)=\delta_{n0}A$).
+ \end{definition}
+ The proofs of uniqueness work just fine. For singular homology, we define
+ $H_n(X;A)$ as the $n$-th homology of $S_*(X)\otimes_\ZZ A$ and $H^n(X;A)$ as the $n$-th
+ homology of $\hom_\ZZ\bigl(S_*(X),A\bigr)$. The replacement of the Hurewicz map is a map
+ $\pi_n(X)\otimes_\ZZ A\to H_n(X;A)$.
+
+ Note that we cannot define $H_n(X;A)$ as $H_n(X)\otimes_\ZZ A$ because $\otimes_\ZZ A$
+ is not exact, so the Mayer-Vietoris axiom would not hold. However, the Universal
+ Coefficients Theorem says we wouldn't be wrong by too much.
+
+ \begin{definition}
+   Given two complexes $C_*$ and $D_*$, we have the inclusion $C_p\otimes D_q\to
+   (C_*\otimes D_*)_{p+q}$. Because of how the boundary maps in a tensor product are
+   defined, this induces a map $H_p(C_*)\otimes H_q(D_*)\xrightarrow{\ \times\ }
+   H_{p+q}(C_*\otimes D_*)$.
+
+   The \emph{cross product} in homology is the map $H_p(X)\otimes
+   H_q(Y)\xrightarrow{\ \times\ } H_{p+q}(X\times Y)$. The cross product in
+   cohomology is the map $H^p(X)\otimes H^q(Y)\xrightarrow{\ \times\ } H^{p+q}(X\times Y)$.
+ \end{definition}
+
+ \begin{theorem}[Algebraic K\"unneth Theorem]
+   If $C_*$ and $D_*$ are free chain complexes over a PID $R$, then for each $n$ there is
+   a natural short exact sequence
+   \[
+    0\to \bigoplus_{p+q=n} \Bigl( H_p(C_*)\otimes_R H_q(D_*) \Bigr) \xrightarrow{\
+    \times\ } H_n(C_*\otimes_R D_*) \to \bigoplus_{p+q=n-1}
+    \tor_R\bigl(H_p(C_*),H_q(D_*)\bigr) \to 0.
+   \]
+   This sequence splits, but not naturally.
+ \end{theorem}
+ This is Theorem 3B.5 of Hatcher. \anton{If $R$ is not a PID, then there are higher
+ $\tor$ groups} Properties of $\tor_R$:
+ \begin{enumerate}
+   \item $\tor_R(M,N)=\tor_R(N,M)$
+   \item $\tor_R(\bigoplus_i M_i,N)\cong \bigoplus_i \tor_R(M_i,N)$
+   \item $\tor_R(M,N)=\tor_R\bigl( T(M),N\bigr)$, where $T(M)$ is the torsion part of $M$
+   \item $\tor_R(R/I,N) = \ker (I\otimes_R N\to R\otimes_R N)$
+ \end{enumerate}
+
+ \begin{corollary}[Universal Coefficients for Homology]
+   There is a natural exact sequence (which splits un-naturally)
+   \[
+    0\to H_n(X)\otimes A\to H_n(X;A)\to \tor_\ZZ\bigl(H_{n-1}(X),A\bigr)\to 0.
+   \]
+ \end{corollary}
+ Just take $A$ to be a chain complex concentrated in degree 0 and apply the K\"unneth
+ Theorem.
+
+ \begin{corollary}[Topological K\"unneth Theorem]
+   There is a natural short exact sequence which splits un-naturally
+   \[
+    0\to \bigoplus_{p+q=n} \bigl( H_p(X)\otimes H_q(Y) \bigr) \xrightarrow{\ \times\ }
+    H_n(X\times Y) \to \bigoplus_{p+q=n-1} \tor \bigl(H_p(X),H_q(Y)\bigr) \to 0.
+   \]
+ \end{corollary}
+
+ \begin{theorem}[Universal Coefficients for Cohomology]
+   There is a natural short exact sequence which splits un-naturally
+   \[
+    0\to \ext_\ZZ \bigl(H_{n-1}(X),A\bigr)\to H^n(X;A)\to \hom_\ZZ\bigl(H_n(X),A\bigr)\to
+    0.
+   \]
+ \end{theorem}
+ \anton{maybe there should be something about the algebraic Dual K\"unneth theorem here}
+ Properties of $\ext$:
+ \begin{enumerate}
+   \item $\ext (\bigoplus_i A_i,B)\cong \prod_i \ext(A_i,C)$
+   \item $\ext (A,\prod_i B_i) \cong \prod_i \ext(A,B_i)$
+   \item $\ext (A,B)=0$ if $A$ is free
+   \item $\ext (\ZZ/n,\ZZ)\cong \ZZ/n$
+   \item $\ext (\ZZ/n,\ZZ/m) \cong \ZZ/gcd(m,n)$
+ \end{enumerate}
+
+
+ \anton{the rest of this section needs to be organized}
+ \begin{definition} \label{Def:orient}
+   \anton{What is the definition of $A$-orientable for an abelian group $A$?}
+ \end{definition}
+ \begin{definition}
+   An orientation of a real finite-dimensional vector space $V$ is an ordered basis up to
+   positive determinant change. This is the same as a generator for
+   $H_n(V,V\smallsetminus 0) \cong \H_{n-1}(V\smallsetminus 0)\cong \ZZ$.
+ \end{definition}
+ \begin{definition}
+   An orientation of a manifold $M^n$ is a compatible choice of generators $\mu_x\in
+   H_n(M,M\smallsetminus x)\cong \ZZ$ for all points $x\in M$. Compatible means that
+   there is an open cover so that $\mu_U\in H_n(M,M\smallsetminus U)$ restricts to
+   $\mu_x$ for all $x\in U$.
+ \end{definition}
+ \begin{remark}
+   Any manifold is $\ZZ/2\ZZ$-oriented, so we can apply all the duality theorems to get
+   information, so long as we use $\ZZ/2\ZZ$ coefficients.
+ \end{remark}
+
+ \section{Cup product in Cohomology}
+ \begin{definition}
+   The cup product in cohomology is defined as $\smile:H^p(X)\otimes H^q(X)\xrightarrow{\
+   \times\ } H^{p+q}(X\times X)\xrightarrow{\Delta^*} H^{p+q}(X)$, where $\Delta:X\to
+   X\times X$ is the diagonal map.
+ \end{definition}
+ \begin{theorem}
+   $H^*(X)=\bigoplus H^p(X)$ is naturally a graded commutative ring under cup product.
+   Recall that commutativity for a graded ring means $a\smile b=(-1)^{|a|\cdot
+   |b|}b\smile a$.
+ \end{theorem}
+ \begin{remark}\label{Rmk:H^*(XxY)}
+   If the $\tor$ terms in the K\"unneth formula are zero, then $\times$ is an
+   isomorphism, so we get coring structure on $H_*(X)$.
+ \end{remark}
+ \begin{remark}
+   If $a\in H^p(X)$ and $b\in H^q(Y)$, then $a\times b=p_1^*a\smile p_2^* b$, where
+   $\times$ is the cross product, and $p_1$ and $p_2$ are the projections from $X\times
+   Y$ to $X$ and $Y$, respectively. This is a handy way to compute cup products.
+
+   If some $\tor$ terms are zero \anton{which?}, then $H^*(X\times Y)\cong H^*(X)\otimes
+   H^*(Y)$ as a graded commutative ring, where we define $(a\otimes b)\cdot (c\otimes
+   d)=(-1)^{|b|\cdot |c|}ac\otimes bd$.
+ \end{remark}
+ \begin{remark}
+   The 1 in the ring $H^*(X)$ is given by the natural map $\ZZ\cong H^*(pt)\to H^*(X)$.
+   In particular, since $H^*(pt)$ is concentrated in degree 0, the 1 in $H^*(X)$ is in
+   degree zero.
+ \end{remark}
+ \begin{example}
+   $H^*(S^1)\cong \ZZ\oplus x\ZZ \cong \ZZ[x]/(x^2)$, where $x\in H^1(S^1)$ is a
+   generator. Note that $x\smile x=0$ because it must lie in degree $2$.
+
+   More generally, $H^*(S^n)\cong \ZZ[x]/(x^2)$, where $|x|=n$.
+ \end{example}
+ \begin{example}
+   $H^*(S^n\times S^m) \cong \ZZ[x,y]/(x^2,y^2)$, with $|x|=n$ and $|y|=m$. This follows
+   from Remark \ref{Rmk:H^*(XxY)}.
+ \end{example}
+ \begin{example}
+   What is the ring $H^*(\CC\PP^2)$? We claim it is $\ZZ[z]/(z^3)$, with $z\in
+   H^2(\CC\PP^2)\cong \ZZ$. \anton{how does one prove this?}
+ \end{example}
+
+\end{document}
